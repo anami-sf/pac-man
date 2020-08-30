@@ -2,6 +2,8 @@ const width = 28;
 const grid = document.querySelector('.grid');
 const scoreDisplay = document.getElementById('score');
 let squares = [];
+let pacmanPosition = 489;
+let score = 0;
 
 // 0 - pacdots
 // 1 - wall
@@ -61,4 +63,58 @@ function createBoard() {
         
     }
 }
+
+createPacman = () => {
+    squares[pacmanPosition].classList.add('pacman')
+
+}
+
+//37 = left 38 up 39 right 40 down
+// row length is 28
+
+checkForWall = (newPosition) => {
+    return squares[newPosition].classList.contains("wall")    
+}
+
+movePacman = (e) => {
+
+    const pacman = document.getElementsByClassName('pacman')
+    squares[pacmanPosition].classList.remove('pacman')
+
+    if(e.keyCode === 37){
+        if(!checkForWall(pacmanPosition - 1)){
+            pacmanPosition -= 1
+        }
+    }
+    else if(e.keyCode === 38){
+        if(!checkForWall(pacmanPosition - width)){
+            pacmanPosition -= width
+        }
+    }
+    else if(e.keyCode === 39){
+        if(!checkForWall(pacmanPosition + 1)){
+            pacmanPosition += 1
+        }
+    }
+    else if(e.keyCode === 40){
+        if(!checkForWall(pacmanPosition + width)){
+            pacmanPosition += width
+        }
+    }
+    else {
+        alert(`That's not a valid key. Press arrow only to move pacman`);
+    }
+        
+    if(squares[pacmanPosition].classList.contains("pac-dot")){
+        squares[pacmanPosition].classList.remove('pac-dot')
+        score ++
+        scoreDisplay.textContent = score
+    }
+    
+    squares[pacmanPosition].classList.add('pacman')
+}
+
+document.addEventListener("keydown", movePacman)
+
 createBoard();
+createPacman();
