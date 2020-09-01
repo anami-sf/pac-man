@@ -87,11 +87,11 @@ createPacman = () => {
 }
 
 class Ghost {
-    constructor(colour, currentPosition, speed, lastMove) {
+    constructor(colour, currentPosition, speed) {
         this.colour = colour;
         this.currentPosition = currentPosition;
         this.speed = speed
-        this.lastMove = lastMove;
+        this.positions = [currentPosition];
     }
 }
 
