@@ -1,10 +1,4 @@
 const width = 28;
-const grid = document.querySelector('.grid');
-const scoreDisplay = document.getElementById('score');
-let squares = [];
-let pacmanPosition = 489;
-let score = 00;
-
 // 0 - pacdots
 // [] - wall [left,up,right,down]
 // 2 - ghost lair
@@ -42,7 +36,16 @@ const layout = [
     [1, 0, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1]
 ]
 
-//create board
+// *********** VARIABLES ************
+
+const grid = document.querySelector('.grid');
+const scoreDisplay = document.getElementById('score');
+let squares = [];
+let pacmanPosition = 489;
+let score = 00;
+
+// *********** CREATE BOARD + PACMAN + GHOSTS ************
+
 function createBoard() {
     scoreDisplay.textContent = score
     //for loop 
@@ -109,11 +112,27 @@ createGhosts = () => {
     });
 }
 
+// *********** MOVE GAME PIECES ************
+
 //for each ghost set their movement intervals
 moveGhosts = () => {
     ghosts.forEach(e => {
         ghostMovement(e)
     });
+}
+
+// *********** GHOST MOVEMENT ************
+
+checkForCssClass = (position, cssClass) => {
+    squares[position].classList.contains(cssClass)
+}
+
+addCssClass = (position, cssClass) => {
+    squares[position].classList.add(cssClass)
+}
+
+removeCssClass = (position, cssClass) => {
+    squares[position].classList.remove(cssClass)
 }
 
 //takes in a ghost object and moves them in a random direction 
@@ -129,7 +148,7 @@ ghostMovement = (ghost) => {
             squares[ghost.currentPosition].classList.remove('temp-pac-dot')
         }
 
-        //Calculate new ghosts position but don't alter the position yet
+        //Calculate new ghost position but don't alter the position yet
         let movement = randomDirection()
         let newPosition = ghost.currentPosition + movement
 
@@ -142,8 +161,9 @@ ghostMovement = (ghost) => {
         else {
             if (checkForWall(newPosition)) {
                 while (true) {
-                    let tempPosition = ghost.currentPosition
-                    if (!checkForWall(tempPosition += randomDirection())) {
+                    //If the ghost hits a wall, recalculate the new direction
+                    let newPosition = ghost.currentPosition + randomDirection()
+                    if (!checkForWall(newPosition)) {
                         ghost.currentPosition = tempPosition
                         break;
                     }
