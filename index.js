@@ -112,7 +112,7 @@ createGhosts = () => {
     });
 }
 
-// *********** GHOST MOVEMENT ************
+// *********** GHOST MOVEMENT *****************************
 
 
 removeGhost = (ghost, position) => {
@@ -196,16 +196,15 @@ setNewPosition = (ghost, position) => {
 }
 
 moveGhost = (ghost) => {
-    const currentPosition = ghost.currentPosition
 
     setInterval(() => {
-        removeGhost(ghost, currentPosition)
-        removePacDot(currentPosition)
+        removeGhost(ghost, ghost.currentPosition)
+        removePacDot(ghost.currentPosition)
 
-        setNewPosition(ghost, currentPosition)
+        setNewPosition(ghost, ghost.currentPosition)
 
-        addPacDot(currentPosition)
-        addGhost(ghost, currentPosition)
+        addPacDot(ghost.currentPosition)
+        addGhost(ghost, ghost.currentPosition)
     }, ghost.speed)
 }
 
