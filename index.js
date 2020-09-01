@@ -112,76 +112,27 @@ createGhosts = () => {
     });
 }
 
-// *********** MOVE GAME PIECES ************
-
-//for each ghost set their movement intervals
-moveGhosts = () => {
-    ghosts.forEach(e => {
-        ghostMovement(e)
-    });
-}
-
 // *********** GHOST MOVEMENT ************
 
-checkForCssClass = (position, cssClass) => {
-    squares[position].classList.contains(cssClass)
+
+removeGhost = (ghost, position) => {
+    squares[position].classList.remove(`ghost-${ghost.colour}`)
 }
 
-addCssClass = (position, cssClass) => {
-    squares[position].classList.add(cssClass)
+addGhost = (ghost, position) => {
+    squares[position].classList.add(`ghost-${ghost.colour}`)
 }
 
-removeCssClass = (position, cssClass) => {
-    squares[position].classList.remove(cssClass)
+removePacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.remove('temp-pac-dot')
+    }
 }
 
-//takes in a ghost object and moves them in a random direction 
-//TODO: make them leave their lair more easily + make them never go back the direction they came 
-ghostMovement = (ghost) => {
-    setInterval(() => {
-
-        //Remove the ghost image from its current position
-        removeCssClass(ghost.currentPosition, `ghost-${ghost.colour}`)
-        // squares[ghost.currentPosition].classList.remove(`ghost-${ghost.colour}`)
-
-        //Remove pacdot from the ghost's current position
-        if (squares[ghost.currentPosition].classList.contains("pac-dot")) {
-            squares[ghost.currentPosition].classList.remove('temp-pac-dot')
-        }
-
-        //Calculate new ghost position but don't alter the position yet
-        let movement = randomDirection()
-        let newPosition = ghost.currentPosition + movement
-
-        if (ghost.currentPosition === 364 && movement === -1) {
-            ghost.currentPosition = 364 + width - 1
-        }
-        else if (ghost.currentPosition === 391 && movement === 1) {
-            ghost.currentPosition = 391 - width + 1
-        }
-        else {
-            if (checkForWall(newPosition)) {
-                while (true) {
-                    //If the ghost hits a wall, recalculate the new direction
-                    let newPosition = ghost.currentPosition + randomDirection()
-                    if (!checkForWall(newPosition)) {
-                        ghost.currentPosition = tempPosition
-                        break;
-                    }
-                }
-
-            }
-            else {
-                ghost.currentPosition = newPosition
-            }
-        }
-
-        if (squares[ghost.currentPosition].classList.contains("pac-dot")) {
-            squares[ghost.currentPosition].classList.add('temp-pac-dot')
-        }
-
-        squares[ghost.currentPosition].classList.add(`ghost-${ghost.colour}`)
-    }, ghost.speed)
+addPacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.add('temp-pac-dot')
+    }
 }
 
 // gets a random num between 0-3 to determine left/up/right/down movement and returns it as a grid index change
@@ -204,17 +155,69 @@ randomDirection = () => {
     return direction
 }
 
-//37 = left 38 up 39 right 40 down
-// row length is 28
-
 checkForWall = (newPosition) => {
     return squares[newPosition].classList.contains("wall")
 }
 
-/* TODO: stop ghosts going through each other (check actual behaviour of pacman game)
-checkForGhost = () => {
+calculateNewPosition = (position) => {
+    return position + randomDirection()
 }
-*/
+
+//TODO: stop ghosts going through each other (check actual behaviour of pacman game)
+// checkForGhost = () => {}
+
+//TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
+// exitLair() => {}
+
+setNewPosition = (ghost, position) => {
+    let newPosition = calculateNewPosition(position)
+
+    if (position === 364 && movement === -1) {
+        ghost.currentPosition = 364 + width - 1
+    }
+    else if (position === 391 && movement === 1) {
+        ghost.currentPosition = 391 - width + 1
+    }
+    else {
+        //If the ghost hits a wall, recalculate the new direction
+        if (checkForWall(newPosition)) {
+            while (true) {
+                newPosition = calculateNewPosition(position)
+                if (!checkForWall(newPosition)) {
+                    ghost.currentPosition = newPosition
+                    break;
+                }
+            }
+        }
+        else {
+            ghost.currentPosition = newPosition
+        }
+    }
+}
+
+moveGhost = (ghost) => {
+    const currentPosition = ghost.currentPosition
+
+    setInterval(() => {
+        removeGhost(ghost, currentPosition)
+        removePacDot(currentPosition)
+
+        setNewPosition(ghost, currentPosition)
+
+        addPacDot(currentPosition)
+        addGhost(ghost, currentPosition)
+    }, ghost.speed)
+}
+
+//for each ghost set their movement intervals
+//TO-DO: rename e variable to 'ghost'
+moveGhosts = () => {
+    ghosts.forEach(e => {
+        moveGhost(e)
+    });
+}
+
+// *********** PAC-MAN MOVEMENT ***************************
 
 // takes in a users keyboard input and moves pacman in direction if available
 movePacman = (e) => {
@@ -268,9 +271,15 @@ movePacman = (e) => {
     squares[pacmanPosition].classList.add(direction)
 }
 
+// *********** EVENT LISTENERS ************
+
 document.addEventListener("keydown", movePacman)
 
+// *********** START GAME ************
+
 document.getElementById("start").addEventListener("click", moveGhosts)
+
+// *********** INITIATE GAME ************
 
 createBoard();
 createPacman();
