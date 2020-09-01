@@ -19,22 +19,52 @@ html, body {
 
 .pac-dot {
     background-color: yellow;
-    border: 5px solid black;
+    border: 6px solid black;
     box-sizing: border-box;
 }
 
 .wall {
     background-color: black;
-    border: 1px solid blue;
     box-sizing: border-box;
 }
 
+.wall-left {
+    border-left: 1px solid blue;
+}
+
+.wall-top {
+    border-top: 1px solid blue;
+}
+
+.wall-right {
+    border-right: 1px solid blue;
+}
+
+.wall-bottom {
+    border-bottom: 1px solid blue;
+}
+
 .power-pellet {
-    background-color: yellow;
+    background-color: peachpuff;
     border-radius: 7.5px;
+    border: 3px solid black;
+    box-sizing: border-box;
 }
 
 .pacman {
-    background-color: yellow;
-    border-radius: 7.5px;
+    background-image: url("./img/pacman-pixel-right.png");
+    background-size: 15px;
+}
+
+.left {
+    background-image: url("./img/pacman-pixel-left.png");
+}
+.right {
+    background-image: url("./img/pacman-pixel-right.png");
+}
+.up {
+    background-image: url("./img/pacman-pixel-up.png");
+}
+.down {
+    background-image: url("./img/pacman-pixel-down.png");
 }
