@@ -141,7 +141,8 @@ ghostMovement = (ghost) => {
     setInterval(() => {
 
         //Remove the ghost image from its current position
-        squares[ghost.currentPosition].classList.remove(`ghost-${ghost.colour}`)
+        removeCssClass(ghost.currentPosition, `ghost-${ghost.colour}`)
+        // squares[ghost.currentPosition].classList.remove(`ghost-${ghost.colour}`)
 
         //Remove pacdot from the ghost's current position
         if (squares[ghost.currentPosition].classList.contains("pac-dot")) {
