@@ -44,7 +44,7 @@ let squares = [];
 let pacmanPosition = 489;
 let score = 00;
 
-// *********** CREATE BOARD + PACMAN + GHOSTS ************
+// *********** CREATE BOARD ************
 
 function createBoard() {
     scoreDisplay.textContent = score
@@ -85,9 +85,13 @@ function createBoard() {
     }
 }
 
+// *********** CREATE PACMAN ********************************
+
 createPacman = () => {
     squares[pacmanPosition].classList.add('pacman')
 }
+
+// *********** CREATE GHOSTS ********************************
 
 class Ghost {
     constructor(colour, currentPosition, speed) {
@@ -99,10 +103,10 @@ class Ghost {
 }
 
 const ghosts = [
-    new Ghost("red", 351, 1000, ""),
-    new Ghost("pink", 348, 900, ""),
-    new Ghost("blue", 379, 800, ""),
-    new Ghost("orange", 376, 700, "")
+    new Ghost("red", 351, 1000),
+    new Ghost("pink", 348, 900),
+    new Ghost("blue", 379, 800),
+    new Ghost("orange", 376, 700)
 ]
 
 // creates each ghost based on starting position and colour, adds them to board
@@ -112,8 +116,7 @@ createGhosts = () => {
     });
 }
 
-// *********** GHOST MOVEMENT *****************************
-
+// *********** GHOST MOVEMENT ********************************************************
 
 removeGhost = (ghost, position) => {
     squares[position].classList.remove(`ghost-${ghost.colour}`)
@@ -216,7 +219,7 @@ moveGhosts = () => {
     });
 }
 
-// *********** PAC-MAN MOVEMENT ***************************
+// *********** PAC-MAN MOVEMENT ****************************************************
 
 // takes in a users keyboard input and moves pacman in direction if available
 movePacman = (e) => {
