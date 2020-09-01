@@ -120,47 +120,46 @@ moveGhosts = () => {
 //TODO: make them leave their lair more easily + make them never go back the direction they came 
 ghostMovement = (ghost) => {
     setInterval(() => {
-        let currentPosition = ghost.currentPosition
 
         //Remove the ghost image from its current position
-        squares[currentPosition].classList.remove(`ghost-${ghost.colour}`)
+        squares[ghost.currentPosition].classList.remove(`ghost-${ghost.colour}`)
 
         //Remove pacdot from the ghost's current position
-        if (squares[currentPosition].classList.contains("pac-dot")) {
-            squares[currentPosition].classList.remove('temp-pac-dot')
+        if (squares[ghost.currentPosition].classList.contains("pac-dot")) {
+            squares[ghost.currentPosition].classList.remove('temp-pac-dot')
         }
 
         //Calculate new ghosts position but don't alter the position yet
         let movement = randomDirection()
-        let newPosition = currentPosition + movement
+        let newPosition = ghost.currentPosition + movement
 
-        if (currentPosition === 364 && movement === -1) {
-            currentPosition = 364 + width - 1
+        if (ghost.currentPosition === 364 && movement === -1) {
+            ghost.currentPosition = 364 + width - 1
         }
-        else if (currentPosition === 391 && movement === 1) {
-            currentPosition = 391 - width + 1
+        else if (ghost.currentPosition === 391 && movement === 1) {
+            ghost.currentPosition = 391 - width + 1
         }
         else {
             if (checkForWall(newPosition)) {
                 while (true) {
-                    let tempPosition = currentPosition
+                    let tempPosition = ghost.currentPosition
                     if (!checkForWall(tempPosition += randomDirection())) {
-                        currentPosition = tempPosition
+                        ghost.currentPosition = tempPosition
                         break;
                     }
                 }
 
             }
             else {
-                currentPosition = newPosition
+                ghost.currentPosition = newPosition
             }
         }
 
-        if (squares[currentPosition].classList.contains("pac-dot")) {
-            squares[currentPosition].classList.add('temp-pac-dot')
+        if (squares[ghost.currentPosition].classList.contains("pac-dot")) {
+            squares[ghost.currentPosition].classList.add('temp-pac-dot')
         }
 
-        squares[currentPosition].classList.add(`ghost-${ghost.colour}`)
+        squares[ghost.currentPosition].classList.add(`ghost-${ghost.colour}`)
     }, ghost.speed)
 }
 
