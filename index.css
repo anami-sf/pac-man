@@ -1,20 +1,39 @@
-html, body {
-    margin: 10;
-    padding: 10;
+:root {
+    --grid-size: 420px;
+}
+
+body {
+    background: gold;
+    font-family: 'VT323', monospace;
 }
 
 .grid {
     display: flex;
     flex-wrap: wrap;
-    width: 420px;
-    height: 420px;
+    width: var(--grid-size);
+    height: var(--grid-size);
     border: solid black;
     background: black;
+    margin: 0 auto;
 }
 
 .grid div {
     width: 15px;
     height: 15px;   
+}
+
+.header {
+    text-align: center;
+}
+
+.header img {
+    max-height: 100px;
+}
+
+.score {
+    margin: 0 auto;
+    width: var(--grid-size);
+    text-transform: uppercase;
 }
 
 .pac-dot {
@@ -53,7 +72,7 @@ html, body {
 
 .pacman {
     background-image: url("./img/pacman-pixel-right.png");
-    background-size: 15px;
+    background-size: cover;
 }
 
 .left {
@@ -67,4 +86,29 @@ html, body {
 }
 .down {
     background-image: url("./img/pacman-pixel-down.png");
+}
+
+.ghost-red {
+    background-image: url("./img/red-ghost.png");
+    background-size: cover;
+}
+
+.ghost-orange {
+    background-image: url("./img/orange-ghost.png");
+    background-size: cover;
+}
+
+.ghost-pink {
+    background-image: url("./img/pink-ghost.png");
+    background-size: cover;
+}
+
+.ghost-blue {
+    background-image: url("./img/blue-ghost.png");
+    background-size: cover;
+}
+
+.temp-pac-dot {
+    background-color: black;
+    border: none;
 }
