@@ -5,11 +5,19 @@
   </head>
   <body>
     <div class="header"><img src="./img/pacmanheader.png"></div>
-    <div class="score">
-      <h3>Score:<span id="score"></span></h3>
-      <button id="start">Start</button>
+    <div class="game-info">
+      <div class="score">
+        <h3>Score: <span id="score"></span></h3>
+      </div>
+      <div>
+        <h3 id="game-state"></h3>
+      </div>
+      <div>
+        <h3>High Score: <span id="high-score"></span></h3>
+      </div>
     </div>
     <div class="grid"></div>
+    <button id="start">Start</button>
     <script src="index.js"></script>
   </body>
 </html>
