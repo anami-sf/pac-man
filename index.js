@@ -175,6 +175,13 @@ checkForWall = (newPosition) => {
     return squares[newPosition].classList.contains("wall")
 }
 
+checkForClash = (newPosition) => {
+    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
+        && squares[newPosition].classList.contains("pacman")) {
+        endGame()
+    }
+}
+
 calculateNewPosition = (position) => {
     return position + randomDirection()
 }
@@ -210,10 +217,11 @@ setNewPosition = (ghost, position) => {
             ghost.currentPosition = newPosition
         }
     }
+
+    checkForClash(ghost.currentPosition)
 }
 
 moveGhost = (ghost) => {
-
     setInterval(() => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
@@ -306,6 +314,25 @@ movePacman = (e) => {
 
     squares[pacmanPosition].classList.add('pacman')
     squares[pacmanPosition].classList.add(direction)
+
+    checkForClash(pacmanPosition)
+}
+
+// *********** GAME STATE ************
+
+setHighScore = () => {
+    if (score > highScore) {
+        highScoreDisplay.textContent = score
+    }
+}
+
+setGameState = () => {
+    gameState = "Game Over"
+    document.getElementById("game-state").textContent = gameState
+}
+
+resetPacman = () => {
+    pacmanPosition = startingPacmanPosition
 }
 
 // *********** EVENT LISTENERS ************
@@ -315,6 +342,16 @@ document.addEventListener("keydown", movePacman)
 // *********** START GAME ************
 
 document.getElementById("start").addEventListener("click", moveGhosts)
+
+// *********** END GAME ************
+
+endGame = () => {
+    removePacman()
+    resetPacman()
+    createPacman()
+    setHighScore()
+    setGameState()
+}
 
 // *********** INITIATE GAME ************
 
