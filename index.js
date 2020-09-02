@@ -4,6 +4,8 @@ const width = 28;
 // 2 - ghost lair
 // 3 - powerpellets
 // 4 - empty
+// 5 - left-side entrance
+// 6 - right-side entrance
 
 const layout = [
     [1, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 1, 0],
@@ -19,7 +21,7 @@ const layout = [
     [0, 0, 0, 0], 1, 1, 1, 1, [1, 0, 1, 0], 0, [1, 0, 0, 0], [0, 0, 1, 0], 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, [1, 0, 0, 0], [0, 0, 1, 0], 0, [1, 0, 1, 0], 1, 1, 1, 1, 1,
     [0, 0, 0, 0], 1, 1, 1, 1, [1, 0, 1, 0], 0, [1, 0, 0, 0], [0, 0, 1, 0], 4, [1, 1, 0, 0], [0, 1, 0, 1], [0, 1, 1, 1], 2, 2, [1, 1, 0, 1], [0, 1, 0, 1], [0, 1, 1, 0], 4, [1, 0, 0, 0], [0, 0, 1, 0], 0, [1, 0, 1, 0], 1, 1, 1, 1, 1,
     [1, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1], 0, [1, 0, 0, 1], [0, 0, 1, 1], 4, [1, 0, 1, 0], 2, 2, 2, 2, 2, 2, [1, 0, 1, 0], 4, [1, 0, 0, 1], [0, 0, 1, 1], 0, [1, 0, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 1, 1],
-    4, 4, 4, 4, 4, 4, 0, 0, 0, 4, [1, 0, 1, 0], 2, 2, 2, 2, 2, 2, [1, 0, 1, 0], 4, 0, 0, 0, 4, 4, 4, 4, 4, 4,
+    5, 4, 4, 4, 4, 4, 0, 0, 0, 4, [1, 0, 1, 0], 2, 2, 2, 2, 2, 2, [1, 0, 1, 0], 4, 0, 0, 0, 4, 4, 4, 4, 4, 6,
     [1, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 1, 0], 0, [1, 1, 0, 0], [0, 1, 1, 0], 4, [1, 0, 1, 0], 2, 2, 2, 2, 2, 2, [1, 0, 1, 0], 4, [1, 1, 0, 0], [0, 1, 1, 0], 0, [1, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 1, 1],
     [0, 0, 0, 0], 1, 1, 1, 1, [1, 0, 1, 0], 0, [1, 0, 0, 0], [0, 0, 1, 0], 4, [1, 0, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], 4, [1, 0, 0, 0], [0, 0, 1, 0], 0, [1, 0, 1, 0], 1, 1, 1, 1, 1,
     [1, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1], 0, [1, 0, 0, 1], [0, 0, 1, 1], 4, [1, 0, 0, 1], [0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 1, 1], 4, [1, 0, 0, 1], [0, 0, 1, 1], 0, [1, 0, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 1, 0],
@@ -40,14 +42,21 @@ const layout = [
 
 const grid = document.querySelector('.grid');
 const scoreDisplay = document.getElementById('score');
+const highScoreDisplay = document.getElementById('high-score');
+const ghostTypes = ['red', 'pink', 'blue', 'orange']
+const startingPacmanPosition = 489
+
 let squares = [];
-let pacmanPosition = 489;
+let pacmanPosition = startingPacmanPosition;
 let score = 00;
+let highScore = 0
+let gameState = ""
 
 // *********** CREATE BOARD ************
 
-function createBoard() {
+createBoard = () => {
     scoreDisplay.textContent = score
+    highScoreDisplay.textContent = highScore
     //for loop 
     for (let i = 0; i < layout.length; i++) {
         //create a square 
@@ -80,6 +89,10 @@ function createBoard() {
             squares[i].classList.add('ghost-lair')
         } else if (layout[i] === 3) {
             squares[i].classList.add('power-pellet')
+        } else if (layout[i] === 5) {
+            squares[i].classList.add('left-shortcut-entrance')
+        } else if (layout[i] === 6) {
+            squares[i].classList.add('right-shortcut-entrance')
         }
 
     }
@@ -88,7 +101,7 @@ function createBoard() {
 // *********** CREATE PACMAN ********************************
 
 createPacman = () => {
-    squares[pacmanPosition].classList.add('pacman')
+    squares[startingPacmanPosition].classList.add('pacman')
 }
 
 // *********** CREATE GHOSTS ********************************
@@ -103,27 +116,27 @@ class Ghost {
 }
 
 const ghosts = [
-    new Ghost("red", 351, 1000),
-    new Ghost("pink", 348, 900),
-    new Ghost("blue", 379, 800),
-    new Ghost("orange", 376, 700)
+    new Ghost(ghostTypes[0], 351, 1000),
+    new Ghost(ghostTypes[1], 348, 900),
+    new Ghost(ghostTypes[2], 379, 800),
+    new Ghost(ghostTypes[3], 376, 700)
 ]
 
 // creates each ghost based on starting position and colour, adds them to board
 createGhosts = () => {
     ghosts.forEach(e => {
-        squares[e.currentPosition].classList.add(`ghost-${e.colour}`)
+        squares[e.currentPosition].classList.add(e.colour)
     });
 }
 
 // *********** GHOST MOVEMENT ********************************************************
 
 removeGhost = (ghost, position) => {
-    squares[position].classList.remove(`ghost-${ghost.colour}`)
+    squares[position].classList.remove(ghost.colour)
 }
 
 addGhost = (ghost, position) => {
-    squares[position].classList.add(`ghost-${ghost.colour}`)
+    squares[position].classList.add(ghost.colour)
 }
 
 removePacDot = (position) => {
@@ -175,6 +188,7 @@ calculateNewPosition = (position) => {
 setNewPosition = (ghost, position) => {
     let newPosition = calculateNewPosition(position)
 
+    //refactor to use current checkShortcut function    
     if (position === 364 && movement === -1) {
         ghost.currentPosition = 364 + width - 1
     }
@@ -221,17 +235,43 @@ moveGhosts = () => {
 
 // *********** PAC-MAN MOVEMENT ****************************************************
 
-// takes in a users keyboard input and moves pacman in direction if available
-movePacman = (e) => {
-    const pacman = document.getElementsByClassName('pacman')
-    let newPosition = pacmanPosition
-    let direction = ""
+removePacman = () => {
     squares[pacmanPosition].classList.remove('pacman')
 
     squares[pacmanPosition].classList.remove('left')
     squares[pacmanPosition].classList.remove('up')
     squares[pacmanPosition].classList.remove('right')
     squares[pacmanPosition].classList.remove('down')
+}
+
+eatPacDot = () => {
+    squares[pacmanPosition].classList.remove('pac-dot')
+    score++
+    scoreDisplay.textContent = score
+}
+
+checkShortcut = (position, direction) => {
+    const leftEntrance = squares[position].classList.contains("left-shortcut-entrance")
+    const rightEntrance = squares[position].classList.contains("right-shortcut-entrance")
+
+    if (leftEntrance && direction === "left") {
+        return position + width - 1
+    }
+    else if (rightEntrance && direction === "right") {
+        return position - width + 1
+    }
+    else {
+        return position
+    }
+}
+
+// takes in a users keyboard input and moves pacman in direction if available
+movePacman = (e) => {
+    const pacman = document.getElementsByClassName('pacman')
+    let newPosition = pacmanPosition
+    let direction = ""
+    
+    removePacman()
 
     if (e.keyCode === 37) {
         newPosition -= 1
@@ -253,20 +293,15 @@ movePacman = (e) => {
         alert(`That's not a valid key. Press arrow only to move pacman`);
     }
 
-    if (pacmanPosition === 364 && e.keyCode === 37) {
-        pacmanPosition = 364 + width - 1
-    }
-    else if (pacmanPosition === 391 && e.keyCode === 39) {
-        pacmanPosition = 391 - width + 1
-    }
-    else if (!checkForWall(newPosition) && !squares[newPosition].classList.contains("ghost-lair")) {
+    pacmanPosition = checkShortcut(pacmanPosition, direction)
+
+    //valid move, pacman position now updated
+    if (!checkForWall(newPosition) && !squares[newPosition].classList.contains("ghost-lair")) {
         pacmanPosition = newPosition
     }
 
     if (squares[pacmanPosition].classList.contains("pac-dot")) {
-        squares[pacmanPosition].classList.remove('pac-dot')
-        score++
-        scoreDisplay.textContent = score
+        eatPacDot()
     }
 
     squares[pacmanPosition].classList.add('pacman')
