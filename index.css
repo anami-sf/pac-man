@@ -30,10 +30,24 @@ body {
     max-height: 100px;
 }
 
-.score {
+.game-info {
     margin: 0 auto;
     width: var(--grid-size);
     text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+}
+
+#start {
+    margin: 0 auto;
+    display: block;
+    padding: 0 15px 0 15px;
+    font-family: 'VT323', monospace;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-top: 10px;
+    background: plum;
 }
 
 .pac-dot {
@@ -88,22 +102,22 @@ body {
     background-image: url("./img/pacman-pixel-down.png");
 }
 
-.ghost-red {
+.red {
     background-image: url("./img/red-ghost.png");
     background-size: cover;
 }
 
-.ghost-orange {
+.orange {
     background-image: url("./img/orange-ghost.png");
     background-size: cover;
 }
 
-.ghost-pink {
+.pink {
     background-image: url("./img/pink-ghost.png");
     background-size: cover;
 }
 
-.ghost-blue {
+.blue {
     background-image: url("./img/blue-ghost.png");
     background-size: cover;
 }
