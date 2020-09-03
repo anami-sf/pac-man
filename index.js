@@ -111,7 +111,7 @@ class Ghost {
         this.colour = colour;
         this.currentPosition = currentPosition;
         this.speed = speed
-        this.positions = [currentPosition];
+        this.lastPosition = currentPosition;
     }
 }
 
@@ -182,8 +182,19 @@ checkForClash = (newPosition) => {
     }
 }
 
-calculateNewPosition = (position) => {
-    return position + randomDirection()
+calculateNewPosition = (position, ghost) => {
+    let newPosition = position + randomDirection()
+    if (newPosition === ghost.lastPosition) {
+        while (true) {
+            let updatedPosition = position + randomDirection()
+            if (updatedPosition !== ghost.lastPosition) {
+                newPosition = updatedPosition
+                break
+            }
+        }
+    }
+
+    return newPosition
 }
 
 //TODO: stop ghosts going through each other (check actual behaviour of pacman game)
@@ -193,7 +204,7 @@ calculateNewPosition = (position) => {
 // exitLair() => {}
 
 setNewPosition = (ghost, position) => {
-    let newPosition = calculateNewPosition(position)
+    let newPosition = calculateNewPosition(position, ghost)
 
     //refactor to use current checkShortcut function    
     if (position === 364 && movement === -1) {
@@ -206,7 +217,7 @@ setNewPosition = (ghost, position) => {
         //If the ghost hits a wall, recalculate the new direction
         if (checkForWall(newPosition)) {
             while (true) {
-                newPosition = calculateNewPosition(position)
+                newPosition = calculateNewPosition(position, ghost)
                 if (!checkForWall(newPosition)) {
                     ghost.currentPosition = newPosition
                     break;
@@ -217,6 +228,8 @@ setNewPosition = (ghost, position) => {
             ghost.currentPosition = newPosition
         }
     }
+
+    ghost.lastPosition = position
 
     checkForClash(ghost.currentPosition)
 }
