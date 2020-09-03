@@ -51,6 +51,8 @@ let pacmanPosition = startingPacmanPosition;
 let score = 00;
 let highScore = 0
 let gameState = ""
+let leftShortcut = 364
+let rightShortcut = 391
 
 // *********** CREATE BOARD ************
 
@@ -182,8 +184,18 @@ checkForClash = (newPosition) => {
     }
 }
 
-calculateNewPosition = (position, ghost) => {
-    let newPosition = position + randomDirection()
+calculateNewPosition = (direction, position, ghost) => {
+    let newPosition;
+
+    if (position === leftShortcut && direction === -1) {
+        newPosition = position + width - 1
+    }
+    else if (position === rightShortcut && direction === 1) {
+        newPosition = position - width + 1
+    } else {
+        newPosition = position + direction
+    }
+
     if (newPosition === ghost.lastPosition) {
         while (true) {
             let updatedPosition = position + randomDirection()
@@ -204,29 +216,23 @@ calculateNewPosition = (position, ghost) => {
 // exitLair() => {}
 
 setNewPosition = (ghost, position) => {
-    let newPosition = calculateNewPosition(position, ghost)
 
-    //refactor to use current checkShortcut function    
-    if (position === 364 && movement === -1) {
-        ghost.currentPosition = 364 + width - 1
-    }
-    else if (position === 391 && movement === 1) {
-        ghost.currentPosition = 391 - width + 1
-    }
-    else {
-        //If the ghost hits a wall, recalculate the new direction
-        if (checkForWall(newPosition)) {
-            while (true) {
-                newPosition = calculateNewPosition(position, ghost)
-                if (!checkForWall(newPosition)) {
-                    ghost.currentPosition = newPosition
-                    break;
-                }
+    let direction = randomDirection()
+    newPosition = calculateNewPosition(direction, position, ghost)
+
+    //If the ghost hits a wall, recalculate the new direction
+    if (checkForWall(newPosition)) {
+        while (true) {
+            direction = randomDirection()
+            newPosition = calculateNewPosition(direction, position, ghost)
+            if (!checkForWall(newPosition)) {
+                ghost.currentPosition = newPosition
+                break;
             }
         }
-        else {
-            ghost.currentPosition = newPosition
-        }
+    }
+    else {
+        ghost.currentPosition = newPosition
     }
 
     ghost.lastPosition = position
@@ -243,7 +249,8 @@ moveGhost = (ghost) => {
 
         addPacDot(ghost.currentPosition)
         addGhost(ghost, ghost.currentPosition)
-    }, ghost.speed)
+    }, 100)
+    //ghost.speed
 }
 
 //for each ghost set their movement intervals
@@ -292,7 +299,7 @@ movePacman = (e) => {
     let newPosition = pacmanPosition
     let direction
     let style = ""
-    
+
     removePacman()
 
     if (e.keyCode === 37) {
