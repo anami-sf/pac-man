@@ -173,7 +173,7 @@ randomDirection = () => {
     return direction
 }
 
-checkForWall = (newPosition) => {
+isWall = (newPosition) => {
     return squares[newPosition].classList.contains("wall")
 }
 
@@ -212,8 +212,44 @@ calculateNewPosition = (direction, position, ghost) => {
 //TODO: stop ghosts going through each other (check actual behaviour of pacman game)
 // checkForGhost = () => {}
 
-//TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
-// exitLair() => {}
+//TODO: Make ghosts leave their lair more easily 
+
+// We should not modify values inside helper functions ***************
+
+isShortCut = () => { }
+isPreviousPosition = (position, ghost) => {
+    position !== ghost.lastPosition
+}
+
+getPosition = (position, direction) => {
+    return position + direction
+}
+
+isLeftEntrance = (position) => {
+    squares[position].classList.contains("left-shortcut-entrance")
+}
+
+isRightEntrance = (position) => {
+    squares[position].classList.contains("right-shortcut-entrance")
+}
+
+goToRightEntrance = (position) => {
+    return position + width - 1
+}
+goToLeftEntrance = (position) => {
+    position - width + 1
+}
+
+getNewPosition = (ghost, currentPosition) => {
+
+    targetPosition = currentPosition + randomDirection()
+
+    if (isWall(targetPosition) || isPreviousPosition(targetPosition, ghost)) {
+        getNewPosition(ghost, targetPosition)
+    }
+
+    return targetPosition
+}
 
 setNewPosition = (ghost, position) => {
 
@@ -221,11 +257,11 @@ setNewPosition = (ghost, position) => {
     newPosition = calculateNewPosition(direction, position, ghost)
 
     //If the ghost hits a wall, recalculate the new direction
-    if (checkForWall(newPosition)) {
+    if (isWall(newPosition)) {
         while (true) {
             direction = randomDirection()
             newPosition = calculateNewPosition(direction, position, ghost)
-            if (!checkForWall(newPosition)) {
+            if (!isWall(newPosition)) {
                 ghost.currentPosition = newPosition
                 break;
             }
@@ -327,7 +363,7 @@ movePacman = (e) => {
     pacmanPosition = checkShortcut(pacmanPosition, direction)
 
     //valid move, pacman position now updated
-    if (!checkForWall(newPosition) && !squares[newPosition].classList.contains("ghost-lair")) {
+    if (!isWall(newPosition) && !squares[newPosition].classList.contains("ghost-lair")) {
         pacmanPosition = newPosition
     }
 
