@@ -262,10 +262,10 @@ checkShortcut = (position, direction) => {
     const leftEntrance = squares[position].classList.contains("left-shortcut-entrance")
     const rightEntrance = squares[position].classList.contains("right-shortcut-entrance")
 
-    if (leftEntrance && direction === "left") {
+    if (leftEntrance && direction === -1) {
         return position + width - 1
     }
-    else if (rightEntrance && direction === "right") {
+    else if (rightEntrance && direction === 1) {
         return position - width + 1
     }
     else {
@@ -277,29 +277,32 @@ checkShortcut = (position, direction) => {
 movePacman = (e) => {
     const pacman = document.getElementsByClassName('pacman')
     let newPosition = pacmanPosition
-    let direction = ""
+    let direction
+    let style = ""
     
     removePacman()
 
     if (e.keyCode === 37) {
-        newPosition -= 1
-        direction = "left"
+        direction = -1
+        style = "left"
     }
     else if (e.keyCode === 38) {
-        newPosition -= width
-        direction = "up"
+        direction = -width
+        style = "up"
     }
     else if (e.keyCode === 39) {
-        newPosition += 1
-        direction = "right"
+        direction = 1
+        style = "right"
     }
     else if (e.keyCode === 40) {
-        newPosition += width
-        direction = "down"
+        direction = +width
+        style = "down"
     }
     else {
         alert(`That's not a valid key. Press arrow only to move pacman`);
     }
+
+    newPosition += direction
 
     pacmanPosition = checkShortcut(pacmanPosition, direction)
 
@@ -313,7 +316,7 @@ movePacman = (e) => {
     }
 
     squares[pacmanPosition].classList.add('pacman')
-    squares[pacmanPosition].classList.add(direction)
+    squares[pacmanPosition].classList.add(style)
 
     checkForClash(pacmanPosition)
 }
