@@ -38,6 +38,11 @@ body {
     justify-content: space-between;
 }
 
+#game-state {
+    margin: 0px;
+    font-size: 3rem;
+}
+
 #start {
     margin: 0 auto;
     display: block;

@@ -45,12 +45,15 @@ const scoreDisplay = document.getElementById('score');
 const highScoreDisplay = document.getElementById('high-score');
 const ghostTypes = ['red', 'pink', 'blue', 'orange']
 const startingPacmanPosition = 489
+const acceptedKeycodes = [37,38,39,40]
 
 let squares = [];
 let pacmanPosition = startingPacmanPosition;
 let score = 00;
 let highScore = 0
 let gameState = ""
+let isRunning = false;
+let intervals = []
 
 // *********** CREATE BOARD ************
 
@@ -94,7 +97,27 @@ createBoard = () => {
         } else if (layout[i] === 6) {
             squares[i].classList.add('right-shortcut-entrance')
         }
+    }
+}
 
+resetBoard = () => {
+    while(grid.firstChild){
+        grid.removeChild(grid.firstChild);
+    }
+    squares = []
+    createBoard()
+}
+
+// *********** GAME LOGIC ************
+
+checkForWall = (newPosition) => {
+    return squares[newPosition].classList.contains("wall")
+}
+
+checkForClash = (newPosition) => {
+    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
+        && squares[newPosition].classList.contains("pacman")) {
+        endGame()
     }
 }
 
@@ -107,11 +130,12 @@ createPacman = () => {
 // *********** CREATE GHOSTS ********************************
 
 class Ghost {
-    constructor(colour, currentPosition, speed) {
-        this.colour = colour;
-        this.currentPosition = currentPosition;
+    constructor(colour, startingPosition, speed) {
+        this.colour = colour
+        this.startingPosition = startingPosition
         this.speed = speed
-        this.lastPosition = currentPosition;
+        this.currentPosition = startingPosition
+        this.lastPosition = startingPosition
     }
 }
 
@@ -124,30 +148,38 @@ const ghosts = [
 
 // creates each ghost based on starting position and colour, adds them to board
 createGhosts = () => {
-    ghosts.forEach(e => {
-        squares[e.currentPosition].classList.add(e.colour)
+    ghosts.forEach(ghost => {
+        squares[ghost.startingPosition].classList.add(ghost.colour)
+    });
+}
+
+resetGhosts = () => {
+    ghosts.forEach(ghost => {
+        squares[ghost.currentPosition].classList.remove(ghost.colour)
+        ghost.currentPosition = ghost.startingPosition
+        ghost.lastPosition = ghost.startingPosition
     });
 }
 
 // *********** GHOST MOVEMENT ********************************************************
 
-removeGhost = (ghost, position) => {
-    squares[position].classList.remove(ghost.colour)
-}
-
 addGhost = (ghost, position) => {
     squares[position].classList.add(ghost.colour)
 }
 
-removePacDot = (position) => {
-    if (squares[position].classList.contains("pac-dot")) {
-        squares[position].classList.remove('temp-pac-dot')
-    }
+removeGhost = (ghost, position) => {
+    squares[position].classList.remove(ghost.colour)
 }
 
 addPacDot = (position) => {
     if (squares[position].classList.contains("pac-dot")) {
         squares[position].classList.add('temp-pac-dot')
+    }
+}
+
+removePacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.remove('temp-pac-dot')
     }
 }
 
@@ -169,17 +201,6 @@ randomDirection = () => {
     }
 
     return direction
-}
-
-checkForWall = (newPosition) => {
-    return squares[newPosition].classList.contains("wall")
-}
-
-checkForClash = (newPosition) => {
-    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
-        && squares[newPosition].classList.contains("pacman")) {
-        endGame()
-    }
 }
 
 calculateNewPosition = (position, ghost) => {
@@ -230,12 +251,10 @@ setNewPosition = (ghost, position) => {
     }
 
     ghost.lastPosition = position
-
-    checkForClash(ghost.currentPosition)
 }
 
 moveGhost = (ghost) => {
-    setInterval(() => {
+    intervals.push(setInterval(() => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
 
@@ -243,7 +262,9 @@ moveGhost = (ghost) => {
 
         addPacDot(ghost.currentPosition)
         addGhost(ghost, ghost.currentPosition)
+        checkForClash(ghost.currentPosition)
     }, ghost.speed)
+    )
 }
 
 //for each ghost set their movement intervals
@@ -251,7 +272,13 @@ moveGhost = (ghost) => {
 moveGhosts = () => {
     ghosts.forEach(e => {
         moveGhost(e)
-    });
+    })
+}
+
+clearGhostIntervals = () => {
+    intervals.forEach(interval => {
+        clearInterval(interval)
+    })
 }
 
 // *********** PAC-MAN MOVEMENT ****************************************************
@@ -288,6 +315,10 @@ checkShortcut = (position, direction) => {
 
 // takes in a users keyboard input and moves pacman in direction if available
 movePacman = (e) => {
+    //if game isn't started or not a valid key press
+    if (!isRunning || !acceptedKeycodes.includes(e.keyCode)) {
+        return
+    }
     const pacman = document.getElementsByClassName('pacman')
     let newPosition = pacmanPosition
     let direction
@@ -311,9 +342,6 @@ movePacman = (e) => {
         direction = +width
         style = "down"
     }
-    else {
-        alert(`That's not a valid key. Press arrow only to move pacman`);
-    }
 
     newPosition += direction
 
@@ -336,14 +364,24 @@ movePacman = (e) => {
 
 // *********** GAME STATE ************
 
+toggleStartButton = () => {
+    let startButton = document.getElementById("start")
+    startButton.disabled = !startButton.disabled
+}
+
+resetScore = () => {
+    score = 0
+    scoreDisplay.textContent = score
+}
+
 setHighScore = () => {
     if (score > highScore) {
-        highScoreDisplay.textContent = score
+        highScore = score
+        highScoreDisplay.textContent = highScore
     }
 }
 
-setGameState = () => {
-    gameState = "Game Over"
+setGameState = (gameState = "") => {
     document.getElementById("game-state").textContent = gameState
 }
 
@@ -351,26 +389,45 @@ resetPacman = () => {
     pacmanPosition = startingPacmanPosition
 }
 
-// *********** EVENT LISTENERS ************
+// *********** INITIATE GAME ************
 
-document.addEventListener("keydown", movePacman)
+initializeGame = (() => {
+    createBoard()
+    createPacman()
+    createGhosts()
+})()
 
 // *********** START GAME ************
 
-document.getElementById("start").addEventListener("click", moveGhosts)
+startGame = () => {
+    isRunning = true;
+    toggleStartButton()
+    resetScore()
+    setGameState()
+    moveGhosts()
+}
 
 // *********** END GAME ************
 
 endGame = () => {
+    isRunning = false
     removePacman()
     resetPacman()
-    createPacman()
+    clearGhostIntervals()
+    resetGhosts()
     setHighScore()
-    setGameState()
+    setGameState("Game Over")
+    setTimeout(() => {
+        resetBoard()
+        createPacman()
+        createGhosts()
+        setGameState()
+        toggleStartButton()
+    },2500)
 }
 
-// *********** INITIATE GAME ************
+// *********** EVENT LISTENERS ************
 
-createBoard();
-createPacman();
-createGhosts();
+document.addEventListener("keydown", movePacman)
+
+document.getElementById("start").addEventListener("click", startGame)
