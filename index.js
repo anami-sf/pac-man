@@ -38,7 +38,7 @@ const layout = [
     [1, 0, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1]
 ]
 
-// *********** VARIABLES ************
+// *********** GLOBAL VARIABLES **************************************
 
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.getElementById('score')
@@ -56,6 +56,38 @@ let isRunning = false
 let intervals = []
 let leftShortcut = 364
 let rightShortcut = 391
+
+// *********** GLOBAL HELPERS **************************************
+
+checkForWall = (newPosition) => {
+    return squares[newPosition].classList.contains("wall")
+}
+
+isWall = (position) => {
+    return squares[position].classList.contains("wall")
+}
+
+checkForClash = (newPosition) => {
+    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
+        && squares[newPosition].classList.contains("pacman")) {
+        endGame()
+    }
+}
+
+isLeftEntrance = (position) => {
+    return squares[position].classList.contains("left-shortcut-entrance")
+}
+
+isRightEntrance = (position) => {
+    return squares[position].classList.contains("right-shortcut-entrance")
+}
+
+goToRightEntrance = (position) => {
+    return position + width - 1
+}
+goToLeftEntrance = (position) => {
+    position - width + 1
+}
 
 // *********** CREATE BOARD ************
 
@@ -108,19 +140,6 @@ resetBoard = () => {
     }
     squares = []
     createBoard()
-}
-
-// *********** GAME LOGIC ************
-
-checkForWall = (newPosition) => {
-    return squares[newPosition].classList.contains("wall")
-}
-
-checkForClash = (newPosition) => {
-    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
-        && squares[newPosition].classList.contains("pacman")) {
-        endGame()
-    }
 }
 
 // *********** CREATE PACMAN ********************************
@@ -211,25 +230,22 @@ randomDirection = () => {
     return direction
 }
 
-isWall = (position) => {
-    return squares[position].classList.contains("wall")
-}
-
 isLastPosition = (position, ghost) => {
     return position === ghost.lastPosition
 }
 
 getNewPosition = (ghost) => {
     let direction = randomDirection()
+    let position = ghost.currentPosition
 
-    if (ghost.currentPosition === leftShortcut && direction === -1) {
-        return ghost.currentPosition + width - 1
+    if (isLeftEntrance(position) && direction === -1) {
+        return position + width - 1
     }
-    else if (ghost.currentPosition === rightShortcut && direction === 1) {
-        return ghost.currentPosition - width + 1
+    else if (isRightEntrance(position) && direction === 1) {
+        return position - width + 1
     }
 
-    let targetPosition = ghost.currentPosition + direction
+    let targetPosition = position + direction
 
     if (isWall(targetPosition) || isLastPosition(targetPosition, ghost)) {
         while (true) {
