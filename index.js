@@ -198,6 +198,10 @@ class Ghost {
         this.currentPosition = startingPosition
         this.lastPosition = startingPosition
     }
+
+    isLastPosition = (position) => {
+        return position === this.lastPosition
+    }
 }
 
 const ghosts = [
@@ -232,10 +236,6 @@ resetGhosts = () => {
 //TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
 // exitLair() => {}
 
-isLastPosition = (position, ghost) => {
-    return position === ghost.lastPosition
-}
-
 getNewPosition = (ghost) => {
     let direction = randomDirection()
     let position = ghost.currentPosition
@@ -249,10 +249,10 @@ getNewPosition = (ghost) => {
 
     let targetPosition = position + direction
 
-    if (isWall(targetPosition) || isLastPosition(targetPosition, ghost)) {
+    if (isWall(targetPosition) || ghost.isLastPosition(targetPosition, ghost)) {
         while (true) {
             targetPosition = getNewPosition(ghost)
-            if (!isWall(targetPosition) && !isLastPosition(targetPosition, ghost)) {
+            if (!isWall(targetPosition) && !ghost.isLastPosition(targetPosition, ghost)) {
                 return targetPosition
             }
         }
@@ -278,10 +278,9 @@ moveGhost = (ghost) => {
 }
 
 //for each ghost set their movement intervals
-//TO-DO: rename e variable to 'ghost'
 moveGhosts = () => {
-    ghosts.forEach(e => {
-        moveGhost(e)
+    ghosts.forEach(ghost => {
+        moveGhost(ghost)
     })
 }
 
