@@ -91,14 +91,6 @@ removePacDot = (position) => {
     }
 }
 
-addGhost = (ghost, position) => {
-    squares[position].classList.add(ghost.colour)
-}
-
-removeGhost = (ghost, position) => {
-    squares[position].classList.remove(ghost.colour)
-}
-
 isLeftEntrance = (position) => {
     return squares[position].classList.contains("left-shortcut-entrance")
 }
@@ -188,7 +180,13 @@ createPacman = () => {
     squares[startingPacmanPosition].classList.add('pacman')
 }
 
-// *********** CREATE GHOSTS ********************************
+// *********** CREAT GHOST CLASS ********************************
+
+//TODO: stop ghosts going through each other (check actual behaviour of pacman game)
+// checkForGhost = () => {}
+
+//TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
+// exitLair() => {}
 
 class Ghost {
     constructor(colour, startingPosition, speed) {
@@ -201,6 +199,14 @@ class Ghost {
 
     isLastPosition = (position) => {
         return position === this.lastPosition
+    }
+
+    addGhost = () => {
+        squares[this.currentPosition].classList.add(this.colour)
+    }
+
+    removeGhost = () => {
+        squares[this.currentPosition].classList.remove(this.colour)
     }
 
     getNewPosition = () => {
@@ -227,6 +233,22 @@ class Ghost {
 
         return targetPosition
     }
+
+    moveGhost = () => {
+        intervals.push(setInterval(() => {
+            this.removeGhost()
+            removePacDot(this.currentPosition)
+
+            let lastPosition = this.currentPosition
+            this.currentPosition = this.getNewPosition()
+            this.lastPosition = lastPosition
+
+            addPacDot(this.currentPosition)
+            this.addGhost()
+            checkForClash(this.currentPosition)
+        }, 100) //ghost.speed       
+        )
+    }
 }
 
 const ghosts = [
@@ -237,7 +259,7 @@ const ghosts = [
 ]
 
 // creates each ghost based on starting position and colour, adds them to board
-createGhosts = () => {
+addGhostsToBoard = () => {
     ghosts.forEach(ghost => {
         squares[ghost.startingPosition].classList.add(ghost.colour)
     });
@@ -246,42 +268,17 @@ createGhosts = () => {
 //To-DO(Jason): refactor using global helper functions
 resetGhosts = () => {
     ghosts.forEach(ghost => {
-        //removeGhost()
+        //ghost.removeGhost()
         squares[ghost.currentPosition].classList.remove(ghost.colour)
         ghost.currentPosition = ghost.startingPosition
         ghost.lastPosition = ghost.startingPosition
     });
 }
 
-// *********** GHOST MOVEMENT ********************************************************
-
-//TODO: stop ghosts going through each other (check actual behaviour of pacman game)
-// checkForGhost = () => {}
-
-//TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
-// exitLair() => {}
-
-
-moveGhost = (ghost) => {
-    intervals.push(setInterval(() => {
-        removeGhost(ghost, ghost.currentPosition)
-        removePacDot(ghost.currentPosition)
-
-        let lastPosition = ghost.currentPosition
-        ghost.currentPosition = ghost.getNewPosition()
-        ghost.lastPosition = lastPosition
-
-        addPacDot(ghost.currentPosition)
-        addGhost(ghost, ghost.currentPosition)
-        checkForClash(ghost.currentPosition)
-    }, 100) //ghost.speed       
-    )
-}
-
 //for each ghost set their movement intervals
 moveGhosts = () => {
     ghosts.forEach(ghost => {
-        moveGhost(ghost)
+        ghost.moveGhost()
     })
 }
 
@@ -406,7 +403,7 @@ resetPacman = () => {
 initializeBoard = (() => {
     createBoard()
     createPacman()
-    createGhosts()
+    addGhostsToBoard()
 })()
 
 // *********** START GAME ************
@@ -432,7 +429,7 @@ endGame = () => {
     setTimeout(() => {
         resetBoard()
         createPacman()
-        createGhosts()
+        addGhostsToBoard()
         setGameState()
         toggleStartButton()
     }, 2500)
