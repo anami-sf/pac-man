@@ -215,39 +215,23 @@ isWall = (newPosition) => {
     return squares[newPosition].classList.contains("wall")
 }
 
-calculateNewPosition = (direction, position, ghost) => {
-    let newPosition = position + direction
-    if (newPosition === ghost.lastPosition) {
-        while (true) {
-            let updatedPosition = position + randomDirection()
-            if (updatedPosition !== ghost.lastPosition) {
-                newPosition = updatedPosition
-                break
-            }
-        }
-    }
-
-    return newPosition
-}
-
-calculateNewPosition = (direction, position, ghost) => {
+calculateNewPosition = (direction, ghost) => {
     let newPosition;
 
-    if (position === leftShortcut && direction === -1) {
-        newPosition = position + width - 1
+    if (ghost.currentPosition === leftShortcut && direction === -1) {
+        return newPosition = ghost.currentPosition + width - 1
     }
-    else if (position === rightShortcut && direction === 1) {
-        newPosition = position - width + 1
+    else if (ghost.currentPosition === rightShortcut && direction === 1) {
+        return newPosition = ghost.currentPosition - width + 1
     } else {
-        newPosition = position + direction
+        newPosition = ghost.currentPosition + direction
     }
 
     if (newPosition === ghost.lastPosition) {
         while (true) {
-            let updatedPosition = position + randomDirection()
-            if (updatedPosition !== ghost.lastPosition) {
-                newPosition = updatedPosition
-                break
+            newPosition = ghost.currentPosition + randomDirection()
+            if (newPosition !== ghost.lastPosition) {
+                return newPosition
             }
         }
     }
@@ -256,15 +240,16 @@ calculateNewPosition = (direction, position, ghost) => {
 }
 
 
-setNewPosition = (ghost, position) => {
+setNewPosition = (ghost) => {
+    let lastPosition = ghost.currentPosition
     let direction = randomDirection()
-    let newPosition = calculateNewPosition(direction, position, ghost)
+    let newPosition = calculateNewPosition(direction, ghost)
 
     //If the ghost hits a wall, recalculate the new direction
     if (isWall(newPosition)) {
         while (true) {
             direction = randomDirection()
-            newPosition = calculateNewPosition(direction, position, ghost)
+            newPosition = calculateNewPosition(direction, ghost)
             if (!isWall(newPosition)) {
                 ghost.currentPosition = newPosition
                 break;
@@ -275,7 +260,7 @@ setNewPosition = (ghost, position) => {
         ghost.currentPosition = newPosition
     }
 
-    ghost.lastPosition = position
+    ghost.lastPosition = lastPosition
 }
 
 moveGhost = (ghost) => {
@@ -283,7 +268,7 @@ moveGhost = (ghost) => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
 
-        setNewPosition(ghost, ghost.currentPosition)
+        setNewPosition(ghost)
 
         addPacDot(ghost.currentPosition)
         addGhost(ghost, ghost.currentPosition)
