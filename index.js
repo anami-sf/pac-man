@@ -244,12 +244,10 @@ calculateNewPosition = (direction, ghost) => {
 
 
 setNewPosition = (ghost) => {
-    let lastPosition = ghost.currentPosition
     let direction = randomDirection()
 
     ghost.currentPosition = calculateNewPosition(direction, ghost)
 
-    ghost.lastPosition = lastPosition
 }
 
 moveGhost = (ghost) => {
@@ -257,7 +255,9 @@ moveGhost = (ghost) => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
 
+        let lastPosition = ghost.currentPosition
         setNewPosition(ghost)
+        ghost.lastPosition = lastPosition
 
         addPacDot(ghost.currentPosition)
         addGhost(ghost, ghost.currentPosition)
