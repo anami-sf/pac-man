@@ -216,7 +216,6 @@ calculateNewPosition = (direction, position, ghost) => {
 
 // We should not modify values inside helper functions ***************
 
-isShortCut = () => { }
 isPreviousPosition = (position, ghost) => {
     position !== ghost.lastPosition
 }
@@ -226,11 +225,11 @@ getPosition = (position, direction) => {
 }
 
 isLeftEntrance = (position) => {
-    squares[position].classList.contains("left-shortcut-entrance")
+    return squares[position].classList.contains("left-shortcut-entrance")
 }
 
 isRightEntrance = (position) => {
-    squares[position].classList.contains("right-shortcut-entrance")
+    return squares[position].classList.contains("right-shortcut-entrance")
 }
 
 goToRightEntrance = (position) => {
@@ -240,12 +239,12 @@ goToLeftEntrance = (position) => {
     position - width + 1
 }
 
-getNewPosition = (ghost, currentPosition) => {
+getNewPosition = (ghost) => {
 
-    targetPosition = currentPosition + randomDirection()
+    targetPosition = ghost.currentPosition + randomDirection()
 
     if (isWall(targetPosition) || isPreviousPosition(targetPosition, ghost)) {
-        getNewPosition(ghost, targetPosition)
+        getNewPosition(ghost, ghost.currentPosition)
     }
 
     return targetPosition
