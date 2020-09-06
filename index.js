@@ -111,7 +111,7 @@ goToRightEntrance = (position) => {
     return position + width - 1
 }
 goToLeftEntrance = (position) => {
-    position - width + 1
+    return position - width + 1
 }
 
 checkForWall = (newPosition) => {
@@ -214,8 +214,10 @@ createGhosts = () => {
     });
 }
 
+//To-DO(Jason): refactor using global helper functions
 resetGhosts = () => {
     ghosts.forEach(ghost => {
+        //removeGhost()
         squares[ghost.currentPosition].classList.remove(ghost.colour)
         ghost.currentPosition = ghost.startingPosition
         ghost.lastPosition = ghost.startingPosition
@@ -239,10 +241,10 @@ getNewPosition = (ghost) => {
     let position = ghost.currentPosition
 
     if (isLeftEntrance(position) && direction === -1) {
-        return position + width - 1
+        return goToRightEntrance(position)
     }
     else if (isRightEntrance(position) && direction === 1) {
-        return position - width + 1
+        return goToLeftEntrance(position)
     }
 
     let targetPosition = position + direction
@@ -397,9 +399,11 @@ resetPacman = () => {
     pacmanPosition = startingPacmanPosition
 }
 
-// *********** INITIATE GAME ************
+// *********** Initialize Board ************
 
-initializeGame = (() => {
+
+// IIFE (Immediately Invoked Function Expression)
+initializeBoard = (() => {
     createBoard()
     createPacman()
     createGhosts()
