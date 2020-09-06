@@ -209,8 +209,8 @@ randomDirection = () => {
     return direction
 }
 
-calculateNewPosition = (position, ghost) => {
-    let newPosition = position + randomDirection()
+calculateNewPosition = (direction, position, ghost) => {
+    let newPosition = position + direction
     if (newPosition === ghost.lastPosition) {
         while (true) {
             let updatedPosition = position + randomDirection()
@@ -226,22 +226,23 @@ calculateNewPosition = (position, ghost) => {
 
 
 
-setNewPosition = (ghost, position) => {
-    let newPosition = calculateNewPosition(position, ghost)
+setNewPosition = (ghost) => {
+    let direction = randomDirection()
+    let newPosition = ghost.currentPosition + direction
 
     //refactor to use current checkShortcut function    
-    if (position === 364 && movement === -1) {
+    if (newPosition === 364 && direction === -1) {
         ghost.currentPosition = 364 + width - 1
     }
-    else if (position === 391 && movement === 1) {
+    else if (newPosition === 391 && direction === 1) {
         ghost.currentPosition = 391 - width + 1
     }
     else {
         //If the ghost hits a wall, recalculate the new direction
-        if (checkForWall(newPosition)) {
+        if (checkForWall(newPosition) || newPosition === ghost.lastPosition) {
             while (true) {
-                newPosition = calculateNewPosition(position, ghost)
-                if (!checkForWall(newPosition)) {
+                newPosition = ghost.currentPosition + randomDirection()
+                if (!checkForWall(newPosition) && newPosition !== ghost.lastPosition) {
                     ghost.currentPosition = newPosition
                     break;
                 }
@@ -252,7 +253,7 @@ setNewPosition = (ghost, position) => {
         }
     }
 
-    ghost.lastPosition = position
+    ghost.lastPosition = ghost.currentPosition
 }
 
 moveGhost = (ghost) => {
@@ -260,12 +261,12 @@ moveGhost = (ghost) => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
 
-        setNewPosition(ghost, ghost.currentPosition)
+        setNewPosition(ghost)
 
         addPacDot(ghost.currentPosition)
         addGhost(ghost, ghost.currentPosition)
         checkForClash(ghost.currentPosition)
-    }, ghost.speed)
+    }, 100) //ghost.speed       
     )
 }
 
