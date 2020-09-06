@@ -211,26 +211,29 @@ randomDirection = () => {
     return direction
 }
 
-isWall = (newPosition) => {
-    return squares[newPosition].classList.contains("wall")
+isWall = (position) => {
+    return squares[position].classList.contains("wall")
+}
+
+isLastPosition = (position, ghost) => {
+    return position === ghost.lastPosition
 }
 
 calculateNewPosition = (direction, ghost) => {
-    let newPosition;
 
     if (ghost.currentPosition === leftShortcut && direction === -1) {
-        return newPosition = ghost.currentPosition + width - 1
+        return ghost.currentPosition + width - 1
     }
     else if (ghost.currentPosition === rightShortcut && direction === 1) {
-        return newPosition = ghost.currentPosition - width + 1
-    } else {
-        newPosition = ghost.currentPosition + direction
+        return ghost.currentPosition - width + 1
     }
 
-    if (newPosition === ghost.lastPosition) {
+    let newPosition = ghost.currentPosition + direction
+
+    if (isWall(newPosition) || isLastPosition(newPosition, ghost)) {
         while (true) {
-            newPosition = ghost.currentPosition + randomDirection()
-            if (newPosition !== ghost.lastPosition) {
+            newPosition = calculateNewPosition(randomDirection(), ghost)
+            if (!isWall(newPosition) && !isLastPosition(newPosition, ghost)) {
                 return newPosition
             }
         }
@@ -243,22 +246,8 @@ calculateNewPosition = (direction, ghost) => {
 setNewPosition = (ghost) => {
     let lastPosition = ghost.currentPosition
     let direction = randomDirection()
-    let newPosition = calculateNewPosition(direction, ghost)
 
-    //If the ghost hits a wall, recalculate the new direction
-    if (isWall(newPosition)) {
-        while (true) {
-            direction = randomDirection()
-            newPosition = calculateNewPosition(direction, ghost)
-            if (!isWall(newPosition)) {
-                ghost.currentPosition = newPosition
-                break;
-            }
-        }
-    }
-    else {
-        ghost.currentPosition = newPosition
-    }
+    ghost.currentPosition = calculateNewPosition(direction, ghost)
 
     ghost.lastPosition = lastPosition
 }
