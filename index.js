@@ -219,7 +219,8 @@ isLastPosition = (position, ghost) => {
     return position === ghost.lastPosition
 }
 
-calculateNewPosition = (direction, ghost) => {
+setNewPosition = (ghost) => {
+    let direction = randomDirection()
 
     if (ghost.currentPosition === leftShortcut && direction === -1) {
         return ghost.currentPosition + width - 1
@@ -232,7 +233,7 @@ calculateNewPosition = (direction, ghost) => {
 
     if (isWall(newPosition) || isLastPosition(newPosition, ghost)) {
         while (true) {
-            newPosition = calculateNewPosition(randomDirection(), ghost)
+            newPosition = setNewPosition(ghost)
             if (!isWall(newPosition) && !isLastPosition(newPosition, ghost)) {
                 return newPosition
             }
@@ -242,21 +243,13 @@ calculateNewPosition = (direction, ghost) => {
     return newPosition
 }
 
-
-setNewPosition = (ghost) => {
-    let direction = randomDirection()
-
-    ghost.currentPosition = calculateNewPosition(direction, ghost)
-
-}
-
 moveGhost = (ghost) => {
     intervals.push(setInterval(() => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
 
         let lastPosition = ghost.currentPosition
-        setNewPosition(ghost)
+        ghost.currentPosition = setNewPosition(ghost)
         ghost.lastPosition = lastPosition
 
         addPacDot(ghost.currentPosition)
