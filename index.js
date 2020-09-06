@@ -40,20 +40,22 @@ const layout = [
 
 // *********** VARIABLES ************
 
-const grid = document.querySelector('.grid');
-const scoreDisplay = document.getElementById('score');
-const highScoreDisplay = document.getElementById('high-score');
+const grid = document.querySelector('.grid')
+const scoreDisplay = document.getElementById('score')
+const highScoreDisplay = document.getElementById('high-score')
 const ghostTypes = ['red', 'pink', 'blue', 'orange']
 const startingPacmanPosition = 489
 const acceptedKeycodes = [37, 38, 39, 40]
 
-let squares = [];
-let pacmanPosition = startingPacmanPosition;
+let squares = []
+let pacmanPosition = startingPacmanPosition
 let score = 00;
 let highScore = 0
 let gameState = ""
-let isRunning = false;
+let isRunning = false
 let intervals = []
+let leftShortcut = 364
+let rightShortcut = 391
 
 // *********** CREATE BOARD ************
 
@@ -209,6 +211,10 @@ randomDirection = () => {
     return direction
 }
 
+isWall = (newPosition) => {
+    return squares[newPosition].classList.contains("wall")
+}
+
 calculateNewPosition = (direction, position, ghost) => {
     let newPosition = position + direction
     if (newPosition === ghost.lastPosition) {
@@ -224,36 +230,52 @@ calculateNewPosition = (direction, position, ghost) => {
     return newPosition
 }
 
+calculateNewPosition = (direction, position, ghost) => {
+    let newPosition;
 
-
-setNewPosition = (ghost) => {
-    let direction = randomDirection()
-    let newPosition = ghost.currentPosition + direction
-
-    //refactor to use current checkShortcut function    
-    if (newPosition === 364 && direction === -1) {
-        ghost.currentPosition = 364 + width - 1
+    if (position === leftShortcut && direction === -1) {
+        newPosition = position + width - 1
     }
-    else if (newPosition === 391 && direction === 1) {
-        ghost.currentPosition = 391 - width + 1
+    else if (position === rightShortcut && direction === 1) {
+        newPosition = position - width + 1
+    } else {
+        newPosition = position + direction
     }
-    else {
-        //If the ghost hits a wall, recalculate the new direction
-        if (checkForWall(newPosition) || newPosition === ghost.lastPosition) {
-            while (true) {
-                newPosition = ghost.currentPosition + randomDirection()
-                if (!checkForWall(newPosition) && newPosition !== ghost.lastPosition) {
-                    ghost.currentPosition = newPosition
-                    break;
-                }
+
+    if (newPosition === ghost.lastPosition) {
+        while (true) {
+            let updatedPosition = position + randomDirection()
+            if (updatedPosition !== ghost.lastPosition) {
+                newPosition = updatedPosition
+                break
             }
         }
-        else {
-            ghost.currentPosition = newPosition
-        }
     }
 
-    ghost.lastPosition = ghost.currentPosition
+    return newPosition
+}
+
+
+setNewPosition = (ghost, position) => {
+    let direction = randomDirection()
+    let newPosition = calculateNewPosition(direction, position, ghost)
+
+    //If the ghost hits a wall, recalculate the new direction
+    if (isWall(newPosition)) {
+        while (true) {
+            direction = randomDirection()
+            newPosition = calculateNewPosition(direction, position, ghost)
+            if (!isWall(newPosition)) {
+                ghost.currentPosition = newPosition
+                break;
+            }
+        }
+    }
+    else {
+        ghost.currentPosition = newPosition
+    }
+
+    ghost.lastPosition = position
 }
 
 moveGhost = (ghost) => {
@@ -261,7 +283,7 @@ moveGhost = (ghost) => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
 
-        setNewPosition(ghost)
+        setNewPosition(ghost, ghost.currentPosition)
 
         addPacDot(ghost.currentPosition)
         addGhost(ghost, ghost.currentPosition)
