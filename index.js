@@ -59,19 +59,44 @@ let rightShortcut = 391
 
 // *********** GLOBAL HELPERS **************************************
 
-checkForWall = (newPosition) => {
-    return squares[newPosition].classList.contains("wall")
-}
-
-isWall = (position) => {
-    return squares[position].classList.contains("wall")
-}
-
-checkForClash = (newPosition) => {
-    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
-        && squares[newPosition].classList.contains("pacman")) {
-        endGame()
+// gets a random num between 0-3 to determine left/up/right/down movement and returns it as a grid index change
+randomDirection = () => {
+    let randomNum = Math.floor(Math.random() * 4)
+    let direction
+    if (randomNum === 0) {
+        direction = -1
     }
+    else if (randomNum === 1) {
+        direction = -width
+    }
+    else if (randomNum === 2) {
+        direction = 1
+    }
+    else if (randomNum === 3) {
+        direction = +width
+    }
+
+    return direction
+}
+
+addPacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.add('temp-pac-dot')
+    }
+}
+
+removePacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.remove('temp-pac-dot')
+    }
+}
+
+addGhost = (ghost, position) => {
+    squares[position].classList.add(ghost.colour)
+}
+
+removeGhost = (ghost, position) => {
+    squares[position].classList.remove(ghost.colour)
 }
 
 isLeftEntrance = (position) => {
@@ -87,6 +112,21 @@ goToRightEntrance = (position) => {
 }
 goToLeftEntrance = (position) => {
     position - width + 1
+}
+
+checkForWall = (newPosition) => {
+    return squares[newPosition].classList.contains("wall")
+}
+
+isWall = (position) => {
+    return squares[position].classList.contains("wall")
+}
+
+checkForClash = (newPosition) => {
+    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
+        && squares[newPosition].classList.contains("pacman")) {
+        endGame()
+    }
 }
 
 // *********** CREATE BOARD ************
@@ -189,46 +229,6 @@ resetGhosts = () => {
 
 //TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
 // exitLair() => {}
-
-addGhost = (ghost, position) => {
-    squares[position].classList.add(ghost.colour)
-}
-
-removeGhost = (ghost, position) => {
-    squares[position].classList.remove(ghost.colour)
-}
-
-addPacDot = (position) => {
-    if (squares[position].classList.contains("pac-dot")) {
-        squares[position].classList.add('temp-pac-dot')
-    }
-}
-
-removePacDot = (position) => {
-    if (squares[position].classList.contains("pac-dot")) {
-        squares[position].classList.remove('temp-pac-dot')
-    }
-}
-
-// gets a random num between 0-3 to determine left/up/right/down movement and returns it as a grid index change
-randomDirection = () => {
-    let randomNum = Math.floor(Math.random() * 4)
-    let direction
-    if (randomNum === 0) {
-        direction = -1
-    }
-    else if (randomNum === 1) {
-        direction = -width
-    }
-    else if (randomNum === 2) {
-        direction = 1
-    }
-    else if (randomNum === 3) {
-        direction = +width
-    }
-
-    return direction
-}
 
 isLastPosition = (position, ghost) => {
     return position === ghost.lastPosition
