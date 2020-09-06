@@ -229,18 +229,18 @@ setNewPosition = (ghost) => {
         return ghost.currentPosition - width + 1
     }
 
-    let newPosition = ghost.currentPosition + direction
+    let targetPosition = ghost.currentPosition + direction
 
-    if (isWall(newPosition) || isLastPosition(newPosition, ghost)) {
+    if (isWall(targetPosition) || isLastPosition(targetPosition, ghost)) {
         while (true) {
-            newPosition = setNewPosition(ghost)
-            if (!isWall(newPosition) && !isLastPosition(newPosition, ghost)) {
-                return newPosition
+            targetPosition = setNewPosition(ghost)
+            if (!isWall(targetPosition) && !isLastPosition(targetPosition, ghost)) {
+                return targetPosition
             }
         }
     }
 
-    return newPosition
+    return targetPosition
 }
 
 moveGhost = (ghost) => {
