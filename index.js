@@ -202,6 +202,31 @@ class Ghost {
     isLastPosition = (position) => {
         return position === this.lastPosition
     }
+
+    getNewPosition = () => {
+        let direction = randomDirection()
+        let position = this.currentPosition
+
+        if (isLeftEntrance(position) && direction === -1) {
+            return goToRightEntrance(position)
+        }
+        else if (isRightEntrance(position) && direction === 1) {
+            return goToLeftEntrance(position)
+        }
+
+        let targetPosition = position + direction
+
+        if (isWall(targetPosition) || this.isLastPosition(targetPosition)) {
+            while (true) {
+                targetPosition = this.getNewPosition()
+                if (!isWall(targetPosition) && !this.isLastPosition(targetPosition)) {
+                    return targetPosition
+                }
+            }
+        }
+
+        return targetPosition
+    }
 }
 
 const ghosts = [
@@ -236,30 +261,6 @@ resetGhosts = () => {
 //TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
 // exitLair() => {}
 
-getNewPosition = (ghost) => {
-    let direction = randomDirection()
-    let position = ghost.currentPosition
-
-    if (isLeftEntrance(position) && direction === -1) {
-        return goToRightEntrance(position)
-    }
-    else if (isRightEntrance(position) && direction === 1) {
-        return goToLeftEntrance(position)
-    }
-
-    let targetPosition = position + direction
-
-    if (isWall(targetPosition) || ghost.isLastPosition(targetPosition, ghost)) {
-        while (true) {
-            targetPosition = getNewPosition(ghost)
-            if (!isWall(targetPosition) && !ghost.isLastPosition(targetPosition, ghost)) {
-                return targetPosition
-            }
-        }
-    }
-
-    return targetPosition
-}
 
 moveGhost = (ghost) => {
     intervals.push(setInterval(() => {
@@ -267,7 +268,7 @@ moveGhost = (ghost) => {
         removePacDot(ghost.currentPosition)
 
         let lastPosition = ghost.currentPosition
-        ghost.currentPosition = getNewPosition(ghost)
+        ghost.currentPosition = ghost.getNewPosition()
         ghost.lastPosition = lastPosition
 
         addPacDot(ghost.currentPosition)
