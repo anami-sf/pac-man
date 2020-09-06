@@ -45,7 +45,7 @@ const scoreDisplay = document.getElementById('score');
 const highScoreDisplay = document.getElementById('high-score');
 const ghostTypes = ['red', 'pink', 'blue', 'orange']
 const startingPacmanPosition = 489
-const acceptedKeycodes = [37,38,39,40]
+const acceptedKeycodes = [37, 38, 39, 40]
 
 let squares = [];
 let pacmanPosition = startingPacmanPosition;
@@ -101,7 +101,7 @@ createBoard = () => {
 }
 
 resetBoard = () => {
-    while(grid.firstChild){
+    while (grid.firstChild) {
         grid.removeChild(grid.firstChild);
     }
     squares = []
@@ -163,6 +163,12 @@ resetGhosts = () => {
 
 // *********** GHOST MOVEMENT ********************************************************
 
+//TODO: stop ghosts going through each other (check actual behaviour of pacman game)
+// checkForGhost = () => {}
+
+//TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
+// exitLair() => {}
+
 addGhost = (ghost, position) => {
     squares[position].classList.add(ghost.colour)
 }
@@ -218,11 +224,7 @@ calculateNewPosition = (position, ghost) => {
     return newPosition
 }
 
-//TODO: stop ghosts going through each other (check actual behaviour of pacman game)
-// checkForGhost = () => {}
 
-//TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
-// exitLair() => {}
 
 setNewPosition = (ghost, position) => {
     let newPosition = calculateNewPosition(position, ghost)
@@ -323,7 +325,7 @@ movePacman = (e) => {
     let newPosition = pacmanPosition
     let direction
     let style = ""
-    
+
     removePacman()
 
     if (e.keyCode === 37) {
@@ -423,7 +425,7 @@ endGame = () => {
         createGhosts()
         setGameState()
         toggleStartButton()
-    },2500)
+    }, 2500)
 }
 
 // *********** EVENT LISTENERS ************
