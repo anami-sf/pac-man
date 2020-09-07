@@ -40,22 +40,25 @@ const layout = [
 
 // *********** GLOBAL VARIABLES **************************************
 
-const grid = document.querySelector('.grid')
+
 const scoreDisplay = document.getElementById('score')
 const highScoreDisplay = document.getElementById('high-score')
+
 const ghostTypes = ['red', 'pink', 'blue', 'orange']
+
 const startingPacmanPosition = 489
 const acceptedKeycodes = [37, 38, 39, 40]
 
-let squares = []
+
 let pacmanPosition = startingPacmanPosition
+
 let score = 00;
 let highScore = 0
+
 let gameState = ""
 let isRunning = false
+
 let intervals = []
-let leftShortcut = 364
-let rightShortcut = 391
 
 // *********** GLOBAL HELPERS **************************************
 
@@ -79,49 +82,9 @@ randomDirection = () => {
     return direction
 }
 
-addPacDot = (position) => {
-    if (squares[position].classList.contains("pac-dot")) {
-        squares[position].classList.add('temp-pac-dot')
-    }
-}
-
-removePacDot = (position) => {
-    if (squares[position].classList.contains("pac-dot")) {
-        squares[position].classList.remove('temp-pac-dot')
-    }
-}
-
-isLeftEntrance = (position) => {
-    return squares[position].classList.contains("left-shortcut-entrance")
-}
-
-isRightEntrance = (position) => {
-    return squares[position].classList.contains("right-shortcut-entrance")
-}
-
-goToRightEntrance = (position) => {
-    return position + width - 1
-}
-goToLeftEntrance = (position) => {
-    return position - width + 1
-}
-
-checkForWall = (newPosition) => {
-    return squares[newPosition].classList.contains("wall")
-}
-
-isWall = (position) => {
-    return squares[position].classList.contains("wall")
-}
-
-checkForClash = (newPosition) => {
-    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
-        && squares[newPosition].classList.contains("pacman")) {
-        endGame()
-    }
-}
-
 // *********** CREATE BOARD ************
+let squares = []
+const grid = document.querySelector('.grid')
 
 createBoard = () => {
     scoreDisplay.textContent = score
@@ -172,6 +135,48 @@ resetBoard = () => {
     }
     squares = []
     createBoard()
+}
+
+checkForWall = (newPosition) => {
+    return squares[newPosition].classList.contains("wall")
+}
+
+isWall = (position) => {
+    return squares[position].classList.contains("wall")
+}
+
+checkForClash = (newPosition) => {
+    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
+        && squares[newPosition].classList.contains("pacman")) {
+        endGame()
+    }
+}
+
+addPacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.add('temp-pac-dot')
+    }
+}
+
+removePacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.remove('temp-pac-dot')
+    }
+}
+
+isLeftEntrance = (position) => {
+    return squares[position].classList.contains("left-shortcut-entrance")
+}
+
+isRightEntrance = (position) => {
+    return squares[position].classList.contains("right-shortcut-entrance")
+}
+
+goToRightEntrance = (position) => {
+    return position + width - 1
+}
+goToLeftEntrance = (position) => {
+    return position - width + 1
 }
 
 // *********** CREATE PACMAN ********************************
@@ -249,43 +254,6 @@ class Ghost {
         }, 100) //ghost.speed       
         )
     }
-}
-
-const ghosts = [
-    new Ghost(ghostTypes[0], 351, 1000),
-    new Ghost(ghostTypes[1], 348, 900),
-    new Ghost(ghostTypes[2], 379, 800),
-    new Ghost(ghostTypes[3], 376, 700)
-]
-
-// creates each ghost based on starting position and colour, adds them to board
-addGhostsToBoard = () => {
-    ghosts.forEach(ghost => {
-        squares[ghost.startingPosition].classList.add(ghost.colour)
-    });
-}
-
-//To-DO(Jason): refactor using global helper functions
-resetGhosts = () => {
-    ghosts.forEach(ghost => {
-        //ghost.removeGhost()
-        squares[ghost.currentPosition].classList.remove(ghost.colour)
-        ghost.currentPosition = ghost.startingPosition
-        ghost.lastPosition = ghost.startingPosition
-    });
-}
-
-//for each ghost set their movement intervals
-moveGhosts = () => {
-    ghosts.forEach(ghost => {
-        ghost.moveGhost()
-    })
-}
-
-clearGhostIntervals = () => {
-    intervals.forEach(interval => {
-        clearInterval(interval)
-    })
 }
 
 // *********** PAC-MAN MOVEMENT ****************************************************
@@ -398,6 +366,19 @@ resetPacman = () => {
 
 // *********** Initialize Board ************
 
+const ghosts = [
+    new Ghost(ghostTypes[0], 351, 1000),
+    new Ghost(ghostTypes[1], 348, 900),
+    new Ghost(ghostTypes[2], 379, 800),
+    new Ghost(ghostTypes[3], 376, 700)
+]
+
+// creates each ghost based on starting position and colour, adds them to board
+addGhostsToBoard = () => {
+    ghosts.forEach(ghost => {
+        squares[ghost.startingPosition].classList.add(ghost.colour)
+    });
+}
 
 // IIFE (Immediately Invoked Function Expression)
 initializeBoard = (() => {
@@ -408,6 +389,13 @@ initializeBoard = (() => {
 
 // *********** START GAME ************
 
+//for each ghost set their movement intervals
+moveGhosts = () => {
+    ghosts.forEach(ghost => {
+        ghost.moveGhost()
+    })
+}
+
 startGame = () => {
     isRunning = true;
     toggleStartButton()
@@ -417,6 +405,21 @@ startGame = () => {
 }
 
 // *********** END GAME ************
+//To-DO(Jason): refactor using global helper functions
+resetGhosts = () => {
+    ghosts.forEach(ghost => {
+        //ghost.removeGhost()
+        squares[ghost.currentPosition].classList.remove(ghost.colour)
+        ghost.currentPosition = ghost.startingPosition
+        ghost.lastPosition = ghost.startingPosition
+    });
+}
+
+clearGhostIntervals = () => {
+    intervals.forEach(interval => {
+        clearInterval(interval)
+    })
+}
 
 endGame = () => {
     isRunning = false
