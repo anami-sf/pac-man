@@ -38,7 +38,7 @@ const layout = [
     [1, 0, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1]
 ]
 
-// *********** VARIABLES ************
+// *********** GLOBAL VARIABLES **************************************
 
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.getElementById('score')
@@ -56,6 +56,78 @@ let isRunning = false
 let intervals = []
 let leftShortcut = 364
 let rightShortcut = 391
+
+// *********** GLOBAL HELPERS **************************************
+
+// gets a random num between 0-3 to determine left/up/right/down movement and returns it as a grid index change
+randomDirection = () => {
+    let randomNum = Math.floor(Math.random() * 4)
+    let direction
+    if (randomNum === 0) {
+        direction = -1
+    }
+    else if (randomNum === 1) {
+        direction = -width
+    }
+    else if (randomNum === 2) {
+        direction = 1
+    }
+    else if (randomNum === 3) {
+        direction = +width
+    }
+
+    return direction
+}
+
+addPacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.add('temp-pac-dot')
+    }
+}
+
+removePacDot = (position) => {
+    if (squares[position].classList.contains("pac-dot")) {
+        squares[position].classList.remove('temp-pac-dot')
+    }
+}
+
+addGhost = (ghost, position) => {
+    squares[position].classList.add(ghost.colour)
+}
+
+removeGhost = (ghost, position) => {
+    squares[position].classList.remove(ghost.colour)
+}
+
+isLeftEntrance = (position) => {
+    return squares[position].classList.contains("left-shortcut-entrance")
+}
+
+isRightEntrance = (position) => {
+    return squares[position].classList.contains("right-shortcut-entrance")
+}
+
+goToRightEntrance = (position) => {
+    return position + width - 1
+}
+goToLeftEntrance = (position) => {
+    return position - width + 1
+}
+
+checkForWall = (newPosition) => {
+    return squares[newPosition].classList.contains("wall")
+}
+
+isWall = (position) => {
+    return squares[position].classList.contains("wall")
+}
+
+checkForClash = (newPosition) => {
+    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
+        && squares[newPosition].classList.contains("pacman")) {
+        endGame()
+    }
+}
 
 // *********** CREATE BOARD ************
 
@@ -110,19 +182,6 @@ resetBoard = () => {
     createBoard()
 }
 
-// *********** GAME LOGIC ************
-
-checkForWall = (newPosition) => {
-    return squares[newPosition].classList.contains("wall")
-}
-
-checkForClash = (newPosition) => {
-    if (ghostTypes.some(ghostType => squares[newPosition].classList.contains(ghostType))
-        && squares[newPosition].classList.contains("pacman")) {
-        endGame()
-    }
-}
-
 // *********** CREATE PACMAN ********************************
 
 createPacman = () => {
@@ -155,8 +214,10 @@ createGhosts = () => {
     });
 }
 
+//To-DO(Jason): refactor using global helper functions
 resetGhosts = () => {
     ghosts.forEach(ghost => {
+        //removeGhost()
         squares[ghost.currentPosition].classList.remove(ghost.colour)
         ghost.currentPosition = ghost.startingPosition
         ghost.lastPosition = ghost.startingPosition
@@ -171,111 +232,33 @@ resetGhosts = () => {
 //TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
 // exitLair() => {}
 
-addGhost = (ghost, position) => {
-    squares[position].classList.add(ghost.colour)
+isLastPosition = (position, ghost) => {
+    return position === ghost.lastPosition
 }
 
-removeGhost = (ghost, position) => {
-    squares[position].classList.remove(ghost.colour)
-}
-
-addPacDot = (position) => {
-    if (squares[position].classList.contains("pac-dot")) {
-        squares[position].classList.add('temp-pac-dot')
-    }
-}
-
-removePacDot = (position) => {
-    if (squares[position].classList.contains("pac-dot")) {
-        squares[position].classList.remove('temp-pac-dot')
-    }
-}
-
-// gets a random num between 0-3 to determine left/up/right/down movement and returns it as a grid index change
-randomDirection = () => {
-    let randomNum = Math.floor(Math.random() * 4)
-    let direction
-    if (randomNum === 0) {
-        direction = -1
-    }
-    else if (randomNum === 1) {
-        direction = -width
-    }
-    else if (randomNum === 2) {
-        direction = 1
-    }
-    else if (randomNum === 3) {
-        direction = +width
-    }
-
-    return direction
-}
-
-isWall = (newPosition) => {
-    return squares[newPosition].classList.contains("wall")
-}
-
-calculateNewPosition = (direction, position, ghost) => {
-    let newPosition = position + direction
-    if (newPosition === ghost.lastPosition) {
-        while (true) {
-            let updatedPosition = position + randomDirection()
-            if (updatedPosition !== ghost.lastPosition) {
-                newPosition = updatedPosition
-                break
-            }
-        }
-    }
-
-    return newPosition
-}
-
-calculateNewPosition = (direction, position, ghost) => {
-    let newPosition;
-
-    if (position === leftShortcut && direction === -1) {
-        newPosition = position + width - 1
-    }
-    else if (position === rightShortcut && direction === 1) {
-        newPosition = position - width + 1
-    } else {
-        newPosition = position + direction
-    }
-
-    if (newPosition === ghost.lastPosition) {
-        while (true) {
-            let updatedPosition = position + randomDirection()
-            if (updatedPosition !== ghost.lastPosition) {
-                newPosition = updatedPosition
-                break
-            }
-        }
-    }
-
-    return newPosition
-}
-
-
-setNewPosition = (ghost, position) => {
+getNewPosition = (ghost) => {
     let direction = randomDirection()
-    let newPosition = calculateNewPosition(direction, position, ghost)
+    let position = ghost.currentPosition
 
-    //If the ghost hits a wall, recalculate the new direction
-    if (isWall(newPosition)) {
+    if (isLeftEntrance(position) && direction === -1) {
+        return goToRightEntrance(position)
+    }
+    else if (isRightEntrance(position) && direction === 1) {
+        return goToLeftEntrance(position)
+    }
+
+    let targetPosition = position + direction
+
+    if (isWall(targetPosition) || isLastPosition(targetPosition, ghost)) {
         while (true) {
-            direction = randomDirection()
-            newPosition = calculateNewPosition(direction, position, ghost)
-            if (!isWall(newPosition)) {
-                ghost.currentPosition = newPosition
-                break;
+            targetPosition = getNewPosition(ghost)
+            if (!isWall(targetPosition) && !isLastPosition(targetPosition, ghost)) {
+                return targetPosition
             }
         }
     }
-    else {
-        ghost.currentPosition = newPosition
-    }
 
-    ghost.lastPosition = position
+    return targetPosition
 }
 
 moveGhost = (ghost) => {
@@ -283,7 +266,9 @@ moveGhost = (ghost) => {
         removeGhost(ghost, ghost.currentPosition)
         removePacDot(ghost.currentPosition)
 
-        setNewPosition(ghost, ghost.currentPosition)
+        let lastPosition = ghost.currentPosition
+        ghost.currentPosition = getNewPosition(ghost)
+        ghost.lastPosition = lastPosition
 
         addPacDot(ghost.currentPosition)
         addGhost(ghost, ghost.currentPosition)
@@ -414,9 +399,11 @@ resetPacman = () => {
     pacmanPosition = startingPacmanPosition
 }
 
-// *********** INITIATE GAME ************
+// *********** Initialize Board ************
 
-initializeGame = (() => {
+
+// IIFE (Immediately Invoked Function Expression)
+initializeBoard = (() => {
     createBoard()
     createPacman()
     createGhosts()
