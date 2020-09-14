@@ -47,6 +47,10 @@ const highScoreDisplay = document.getElementById('high-score')
 const ghostTypes = ['red', 'pink', 'blue', 'orange']
 const startingPacmanPosition = 489
 const acceptedKeycodes = [37, 38, 39, 40]
+const pacDeath = new Audio("./audio/pac_dead.wav")
+const pacWakka = new Audio("./audio/pac_wakka.wav")
+const gameIntro = new Audio("./audio/game_start.mp3")
+const eatingGhost = new Audio("./audio/eating_ghost.mp3")
 
 let squares = []
 let pacmanPosition = startingPacmanPosition
@@ -150,6 +154,7 @@ checkForClash = (position) => {
         ghosts.forEach(ghost => {
             if (position === ghost.currentPosition) {
                 if (ghost.isScared) {
+                    eatingGhost.play()
                     score += 25
                     updateScore()
                     resetGhost(ghost)
@@ -394,6 +399,7 @@ movePacman = (e) => {
         return
     }
     e.preventDefault(); //stops the window from scrolling with key presses while game is running
+    pacWakka.play()
     const pacman = document.getElementsByClassName('pacman')
     let newPosition = pacmanPosition
     let direction
@@ -479,18 +485,21 @@ initializeBoard = (() => {
 
 // *********** START GAME ************
 
-startGame = () => {
-    isRunning = true;
-    toggleStartButton()
-    resetScore()
-    setGameState()
-    moveGhosts()
+    gameIntro.play()
+    setTimeout(() => {
+        isRunning = true;
+        toggleStartButton()
+        resetScore()
+        setGameState()
+        moveGhosts()
+    },4000)
 }
 
 // *********** END GAME ************
 
 endGame = () => {
     isRunning = false
+    pacDeath.play();
     removePacman()
     resetPacman()
     clearGhostIntervals()
