@@ -127,7 +127,13 @@ body {
     background-size: cover;
 }
 
-.temp-pac-dot {
+.override-bg {
     background-color: black;
     border: none;
+    border-radius: 0px;
+}
+
+.scared-ghost {
+    background-image: url("./img/scared-ghost.png");
+    background-size: cover;
 }
