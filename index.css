@@ -137,3 +137,9 @@ body {
     background-image: url("./img/scared-ghost.png");
     background-size: cover;
 }
+
+#ready-state {
+    text-transform: uppercase;
+    color: gold;
+    font-size: 1.7rem;
+}

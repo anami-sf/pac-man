@@ -19,12 +19,9 @@ let squares = []
 let pacmanPosition = startingPacmanPosition
 let score = 0;
 let highScore = 0
-let gameState = ""
 let isRunning = false
 let intervals = []
 let pelletTimer
-let leftShortcut = 364
-let rightShortcut = 391
 
 // *********** GLOBAL HELPERS **************************************
 
@@ -130,10 +127,6 @@ const checkForClash = (position) => {
     }
 }
 
-const addScared = (ghost) => {
-    squares[ghost.currentPosition].classList.add('scared-ghost')
-}
-
 const updateScore = () => {
     scoreDisplay.textContent = score
 }
@@ -181,6 +174,9 @@ const createBoard = () => {
             squares[i].classList.add('right-shortcut-entrance')
         } else if (layout[i] === 7) {
             squares[i].classList.add('forbidden')
+        } else if (layout[i] === 8) {
+            squares[i].classList.add('forbidden')
+            squares[i].id = "ready-state"
         }
     }
 }
@@ -436,6 +432,10 @@ const resetPacman = () => {
     pacmanPosition = startingPacmanPosition
 }
 
+const setReadyMessage = (readyState = "") => {
+    document.getElementById("ready-state").textContent = readyState
+}
+
 // *********** Initialize Board ************
 
 
@@ -444,19 +444,21 @@ const initializeBoard = (() => {
     createBoard()
     createPacman()
     createGhosts()
+    setReadyMessage("Ready!")
 })()
 
 // *********** START GAME ************
 
 const startGame = () => {
     gameIntro.play()
+    toggleStartButton()
     setTimeout(() => {
         isRunning = true;
-        toggleStartButton()
+        setReadyMessage()
         resetScore()
         setGameState()
         moveGhosts()
-    },4000)
+    },gameIntro.duration * 1000)
 }
 
 // *********** END GAME ************
@@ -477,6 +479,7 @@ const endGame = () => {
         createGhosts()
         setGameState()
         toggleStartButton()
+        setReadyMessage("Ready!")
     }, 2500)
 }
 
