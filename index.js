@@ -54,7 +54,7 @@ const eatingGhost = new Audio("./audio/eating_ghost.mp3")
 
 let squares = []
 let pacmanPosition = startingPacmanPosition
-let score = 00;
+let score = 0;
 let highScore = 0
 let gameState = ""
 let isRunning = false
@@ -66,7 +66,7 @@ let rightShortcut = 391
 // *********** GLOBAL HELPERS **************************************
 
 // gets a random num between 0-3 to determine left/up/right/down movement and returns it as a grid index change
-randomDirection = () => {
+const randomDirection = () => {
     let randomNum = Math.floor(Math.random() * 4)
     let direction
     if (randomNum === 0) {
@@ -85,70 +85,70 @@ randomDirection = () => {
     return direction
 }
 
-addPacDot = (position) => {
+const addPacDot = (position) => {
     if (isPacDot(position) || isPowerPellet(position)) {
         squares[position].classList.add('override-bg')
     }
 }
 
-removePacDot = (position) => {
+const removePacDot = (position) => {
     if (isPacDot(position) || isPowerPellet(position)) {
         squares[position].classList.remove('override-bg')
     }
 }
 
-addGhost = (ghost, position) => {
+const addGhost = (ghost, position) => {
     squares[position].classList.add(ghost.colour)
 }
 
-addScaredGhost = (position) => {
+const addScaredGhost = (position) => {
     squares[position].classList.add("scared-ghost")
 }
 
-removeGhost = (ghost) => {
+const removeGhost = (ghost) => {
     squares[ghost.currentPosition].classList.remove(ghost.colour)
     squares[ghost.currentPosition].classList.remove('scared-ghost')
 }
 
-resetGhost = (ghost) => {
+const resetGhost = (ghost) => {
     squares[ghost.currentPosition].classList.remove('scared-ghost')
     squares[ghost.currentPosition].classList.remove(ghost.colour)
     ghost.currentPosition = ghost.startingPosition
     ghost.lastPosition = ghost.startingPosition
 }
 
-isLeftEntrance = (position) => {
+const isLeftEntrance = (position) => {
     return squares[position].classList.contains("left-shortcut-entrance")
 }
 
-isRightEntrance = (position) => {
+const isRightEntrance = (position) => {
     return squares[position].classList.contains("right-shortcut-entrance")
 }
 
-goToRightEntrance = (position) => {
+const goToRightEntrance = (position) => {
     return position + width - 1
 }
-goToLeftEntrance = (position) => {
+const goToLeftEntrance = (position) => {
     return position - width + 1
 }
 
-isWall = (position) => {
+const isWall = (position) => {
     return squares[position].classList.contains("wall")
 }
 
-isGhostLair = (position) => {
+const isGhostLair = (position) => {
     return squares[position].classList.contains("ghost-lair")
 }
 
-isPacDot = (position) => {
+const isPacDot = (position) => {
     return squares[position].classList.contains("pac-dot")
 }
 
-isPowerPellet = (position) => {
+const isPowerPellet = (position) => {
     return squares[position].classList.contains("power-pellet")
 }
 
-checkForClash = (position) => {
+const checkForClash = (position) => {
     if ((ghostTypes.some(ghostType => squares[position].classList.contains(ghostType)) || squares[position].classList.contains("scared-ghost"))
         && squares[position].classList.contains("pacman")) {
         ghosts.forEach(ghost => {
@@ -167,17 +167,17 @@ checkForClash = (position) => {
     }
 }
 
-addScared = (ghost) => {
+const addScared = (ghost) => {
     squares[ghost.currentPosition].classList.add('scared-ghost')
 }
 
-updateScore = () => {
+const updateScore = () => {
     scoreDisplay.textContent = score
 }
 
 // *********** CREATE BOARD ************
 
-createBoard = () => {
+const createBoard = () => {
     updateScore()
     highScoreDisplay.textContent = highScore
     //for loop 
@@ -222,7 +222,7 @@ createBoard = () => {
     }
 }
 
-resetBoard = () => {
+const resetBoard = () => {
     while (grid.firstChild) {
         grid.removeChild(grid.firstChild);
     }
@@ -232,7 +232,7 @@ resetBoard = () => {
 
 // *********** CREATE PACMAN ********************************
 
-createPacman = () => {
+const createPacman = () => {
     squares[startingPacmanPosition].classList.add('pacman')
 }
 
@@ -257,14 +257,14 @@ const ghosts = [
 ]
 
 // creates each ghost based on starting position and colour, adds them to board
-createGhosts = () => {
+const createGhosts = () => {
     ghosts.forEach(ghost => {
         squares[ghost.startingPosition].classList.add(ghost.colour)
     });
 }
 
 //To-DO(Jason): refactor using global helper functions
-resetGhosts = () => {
+const resetGhosts = () => {
     ghosts.forEach(ghost => {
         resetGhost(ghost)
     });
@@ -278,15 +278,15 @@ resetGhosts = () => {
 //TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
 // exitLair() => {}
 
-isLastPosition = (position, ghost) => {
+const isLastPosition = (position, ghost) => {
     return position === ghost.lastPosition
 }
 
-isForbidden = (position) => {
+const isForbidden = (position) => {
     return squares[position].classList.contains("forbidden")
 }
 
-getNewPosition = (ghost) => {
+const getNewPosition = (ghost) => {
     let direction = randomDirection()
     let position = ghost.currentPosition
 
@@ -311,7 +311,7 @@ getNewPosition = (ghost) => {
     return targetPosition
 }
 
-moveGhost = (ghost) => {
+const moveGhost = (ghost) => {
     intervals.push(setInterval(() => {
         removeGhost(ghost)
         removePacDot(ghost.currentPosition)
@@ -335,25 +335,25 @@ moveGhost = (ghost) => {
 
 //for each ghost set their movement intervals
 //TO-DO: rename e variable to 'ghost'
-moveGhosts = () => {
+const moveGhosts = () => {
     ghosts.forEach(ghost => {
         moveGhost(ghost)
     })
 }
 
-clearGhostIntervals = () => {
+const clearGhostIntervals = () => {
     intervals.forEach(interval => {
         clearInterval(interval)
     })
 }
 
-scareGhosts = () => ghosts.forEach(ghost => ghost.isScared = true)
+const scareGhosts = () => ghosts.forEach(ghost => ghost.isScared = true)
 
-unScareGhosts = () => ghosts.forEach(ghost => ghost.isScared = false)
+const unScareGhosts = () => ghosts.forEach(ghost => ghost.isScared = false)
 
 // *********** PAC-MAN MOVEMENT ****************************************************
 
-removePacman = () => {
+const removePacman = () => {
     squares[pacmanPosition].classList.remove('pacman')
 
     squares[pacmanPosition].classList.remove('left')
@@ -362,13 +362,13 @@ removePacman = () => {
     squares[pacmanPosition].classList.remove('down')
 }
 
-eatPacDot = () => {
+const eatPacDot = () => {
     squares[pacmanPosition].classList.remove('pac-dot')
     score++
     updateScore()
 }
 
-eatPowerPellet = () => {
+const eatPowerPellet = () => {
     clearTimeout(pelletTimer)
     squares[pacmanPosition].classList.remove('power-pellet')
     score += 5
@@ -377,7 +377,7 @@ eatPowerPellet = () => {
     pelletTimer = setTimeout(unScareGhosts, 10000)
 }
 
-checkShortcut = (position, direction) => {
+const checkShortcut = (position, direction) => {
     const leftEntrance = squares[position].classList.contains("left-shortcut-entrance")
     const rightEntrance = squares[position].classList.contains("right-shortcut-entrance")
 
@@ -393,7 +393,7 @@ checkShortcut = (position, direction) => {
 }
 
 // takes in a users keyboard input and moves pacman in direction if available
-movePacman = (e) => {
+const movePacman = (e) => {
     //if game isn't started or not a valid key press
     if (!isRunning || !acceptedKeycodes.includes(e.keyCode)) {
         return
@@ -448,28 +448,28 @@ movePacman = (e) => {
 
 // *********** GAME STATE ************
 
-toggleStartButton = () => {
+const toggleStartButton = () => {
     let startButton = document.getElementById("start")
     startButton.disabled = !startButton.disabled
 }
 
-resetScore = () => {
+const resetScore = () => {
     score = 0
     updateScore()
 }
 
-setHighScore = () => {
+const setHighScore = () => {
     if (score > highScore) {
         highScore = score
         highScoreDisplay.textContent = highScore
     }
 }
 
-setGameState = (gameState = "") => {
+const setGameState = (gameState = "") => {
     document.getElementById("game-state").textContent = gameState
 }
 
-resetPacman = () => {
+const resetPacman = () => {
     pacmanPosition = startingPacmanPosition
 }
 
@@ -477,7 +477,7 @@ resetPacman = () => {
 
 
 // IIFE (Immediately Invoked Function Expression)
-initializeBoard = (() => {
+const initializeBoard = (() => {
     createBoard()
     createPacman()
     createGhosts()
@@ -485,6 +485,7 @@ initializeBoard = (() => {
 
 // *********** START GAME ************
 
+const startGame = () => {
     gameIntro.play()
     setTimeout(() => {
         isRunning = true;
@@ -497,7 +498,7 @@ initializeBoard = (() => {
 
 // *********** END GAME ************
 
-endGame = () => {
+const endGame = () => {
     isRunning = false
     pacDeath.play();
     removePacman()
