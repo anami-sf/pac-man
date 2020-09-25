@@ -75,6 +75,7 @@ const resetGhost = (ghost) => {
     squares[ghost.currentPosition].classList.remove(ghost.colour)
     ghost.currentPosition = ghost.startingPosition
     ghost.lastPosition = ghost.startingPosition
+    ghost.isScared = false
 }
 
 const isLeftEntrance = (position) => {
