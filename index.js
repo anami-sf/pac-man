@@ -14,6 +14,7 @@ const pacDeath = new Audio("./audio/pac_dead.wav")
 const pacWakka = new Audio("./audio/pac_wakka.wav")
 const gameIntro = new Audio("./audio/game_start.mp3")
 const eatingGhost = new Audio("./audio/eating_ghost.mp3")
+const pacWin = new Audio("./audio/game_win.mp3")
 
 let squares = []
 let pacmanPosition = startingPacmanPosition
@@ -121,7 +122,7 @@ const checkForClash = (position) => {
                     resetGhost(ghost)
                 }
                 else {
-                    endGame()
+                    endGame(false)
                 }
             }
         });
@@ -404,6 +405,7 @@ const movePacman = (e) => {
     squares[pacmanPosition].classList.add(style)
 
     checkForClash(pacmanPosition)
+    checkForWin()
 }
 
 // *********** GAME STATE ************
@@ -437,6 +439,10 @@ const setReadyMessage = (readyState = "") => {
     document.getElementById("ready-state").textContent = readyState
 }
 
+const checkForWin = () => {
+    document.querySelectorAll(".pac-dot").length === 0 && endGame(true)
+}
+
 // *********** Initialize Board ************
 
 
@@ -464,16 +470,16 @@ const startGame = () => {
 
 // *********** END GAME ************
 
-const endGame = () => {
+const endGame = (victory) => {
     isRunning = false
-    pacDeath.play();
+    victory ? pacWin.play() : pacDeath.play();
     removePacman()
     resetPacman()
     clearGhostIntervals()
     unScareGhosts()
     resetGhosts()
     setHighScore()
-    setGameState("Game Over")
+    setGameState(victory ? "Congrats!" : "Game Over")
     setTimeout(() => {
         resetBoard()
         createPacman()
