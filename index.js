@@ -23,6 +23,7 @@ let highScore = 0
 let isRunning = false
 let intervals = []
 let pelletTimer
+let muted = false
 
 // *********** GLOBAL HELPERS **************************************
 
@@ -116,7 +117,7 @@ const checkForClash = (position) => {
         ghosts.forEach(ghost => {
             if (position === ghost.currentPosition) {
                 if (ghost.isScared) {
-                    eatingGhost.play()
+                    playSound(eatingGhost)
                     score += 25
                     updateScore()
                     resetGhost(ghost)
@@ -236,9 +237,6 @@ const resetGhosts = () => {
 //TODO: stop ghosts going through each other (check actual behaviour of pacman game)
 // checkForGhost = () => {}
 
-//TODO: Make ghosts leave their lair more easily + make them never go back the direction they came 
-// exitLair() => {}
-
 const isLastPosition = (position, ghost) => {
     return position === ghost.lastPosition
 }
@@ -295,7 +293,6 @@ const moveGhost = (ghost) => {
 }
 
 //for each ghost set their movement intervals
-//TO-DO: rename e variable to 'ghost'
 const moveGhosts = () => {
     ghosts.forEach(ghost => {
         moveGhost(ghost)
@@ -360,7 +357,7 @@ const movePacman = (e) => {
         return
     }
     e.preventDefault(); //stops the window from scrolling with key presses while game is running
-    pacWakka.play()
+    playSound(pacWakka)
     const pacman = document.getElementsByClassName('pacman')
     let newPosition = pacmanPosition
     let direction
@@ -444,7 +441,20 @@ const checkForWin = () => {
 }
 
 // *********** Initialize Board ************
+const playSound = (sound) => {
+    if (!muted) {
+        sound.play()
+    }
+}
 
+const toggleSound = (e) => {
+    muted = !muted
+    const soundId = document.getElementById("sound")
+    soundId.removeAttribute('class')
+    muted ? soundId.classList.add('fas', 'fa-volume-mute') : soundId.classList.add('fas', 'fa-volume-off')
+}
+
+// *********** Initialize Board ************
 
 // IIFE (Immediately Invoked Function Expression)
 const initializeBoard = (() => {
@@ -457,7 +467,7 @@ const initializeBoard = (() => {
 // *********** START GAME ************
 
 const startGame = () => {
-    gameIntro.play()
+    playSound(gameIntro)
     toggleStartButton()
     setTimeout(() => {
         isRunning = true;
@@ -472,7 +482,7 @@ const startGame = () => {
 
 const endGame = (victory) => {
     isRunning = false
-    victory ? pacWin.play() : pacDeath.play();
+    victory ? playSound(pacWin) : playSound(pacDeath);
     removePacman()
     resetPacman()
     clearGhostIntervals()
@@ -491,6 +501,7 @@ const endGame = (victory) => {
 }
 
 // *********** EVENT LISTENERS ************
+document.getElementById("sound").addEventListener("click", toggleSound)
 
 document.addEventListener("keydown", movePacman)
 
