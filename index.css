@@ -143,3 +143,12 @@ body {
     color: gold;
     font-size: 1.7rem;
 }
+
+#sound {
+    cursor: pointer;
+    font-size: 1.5rem;
+    position: fixed;
+    right: 0;
+    top: 0;
+    padding: 0.5rem;
+}
